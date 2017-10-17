@@ -29,7 +29,7 @@ public class Agent extends AbstractAgent {
                 Message m = readMessage();
                 log("I have received " + m);
             }
-
+            //Test Comment
             StatusMessage status = right();
             log(String.format("I am now on position [%d,%d] of a %dx%d map.",
                     status.agentX, status.agentY, status.width, status.height));
