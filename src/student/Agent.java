@@ -14,8 +14,6 @@ import java.util.ArrayList;
 
 public class Agent extends AbstractAgent
 {
-    JCDriver _driver;
-
     CFreeFSM _fsm;
 
     ArrayList<CFSMBaseState> _states = new ArrayList<CFSMBaseState>();
@@ -27,7 +25,6 @@ public class Agent extends AbstractAgent
     public Agent(int id, InputStream is, OutputStream os, SimulationApi api) throws Exception
     {
         super(id, is, os, api);
-        //_driver = new JCDriver(this);
 
         if(id == 1)
             _states.add(new CFSMStateStartTalkOne(this));
