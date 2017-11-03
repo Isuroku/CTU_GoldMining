@@ -2,6 +2,7 @@ package student.FSM;
 
 import mas.agents.Message;
 import mas.agents.StringMessage;
+import mas.agents.task.mining.StatusMessage;
 import student.Agent;
 
 import java.io.IOException;
@@ -19,7 +20,8 @@ public class CFSMStateStartTalkOne extends CFSMBaseState
     @Override
     public void OnEnter(CFSMBaseState inPrevState) throws Exception
     {
-
+        StatusMessage sm = sense();
+        Memory().InitCoord(sm);
     }
 
     @Override
@@ -33,19 +35,17 @@ public class CFSMStateStartTalkOne extends CFSMBaseState
         super.OnMessage(inMessage);
 
         if(inMessage.stringify().compareToIgnoreCase("Hello") == 0)
-        {
-            _owner._agent_count++;
-        }
+            Memory().SetAgenCount(Memory().AgentCount() + 1);
     }
 
     @Override
     public void Update(long inUpdateNumber) throws Exception
     {
         if(inUpdateNumber < 3)
-        return;
+            return;
 
-        for(int i = 2; i <= _owner._agent_count; i++)
-            _owner.sendMessage(i, new StringMessage(String.format("AgentCount:%d", _owner._agent_count)));
+        for(int i = 2; i <= Memory().AgentCount(); i++)
+            _owner.sendMessage(i, new StringMessage(String.format("AgentCount:%d", Memory().AgentCount())));
         _owner.SwitchState(this, EStateType.Idle);
 
     }

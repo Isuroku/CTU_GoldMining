@@ -20,11 +20,13 @@ public class Agent extends AbstractAgent
 
     long _update_counter = 0;
 
-    public int _agent_count = 1;
+    public CAgentMemory Memory;
 
     public Agent(int id, InputStream is, OutputStream os, SimulationApi api) throws Exception
     {
         super(id, is, os, api);
+
+        Memory = new CAgentMemory(this);
 
         if(id == 1)
             _states.add(new CFSMStateStartTalkOne(this));
@@ -40,7 +42,8 @@ public class Agent extends AbstractAgent
     @Override
     public void act() throws Exception
     {
-        sendMessage(0, new StringMessage("Hello"));
+        StatusMessage sm = sense();
+        log(sm.agentX + " " + sm.agentY);
 
         while(true) {
 
