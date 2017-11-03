@@ -17,7 +17,7 @@ public class CFSMStateIdle extends CFSMBaseState
     @Override
     public void OnEnter(CFSMBaseState inPrevState) throws IOException
     {
-
+        sense();
     }
 
 

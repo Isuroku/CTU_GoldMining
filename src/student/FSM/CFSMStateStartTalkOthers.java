@@ -34,8 +34,7 @@ public class CFSMStateStartTalkOthers extends CFSMBaseState
     @Override
     public void OnEnter(CFSMBaseState inPrevState) throws IOException
     {
-        StatusMessage sm = sense();
-        Memory().InitCoord(sm);
+        sense(false);
 
         SendMessage(1, new StringMessage("Hello"));
     }

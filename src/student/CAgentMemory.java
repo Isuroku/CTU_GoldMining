@@ -15,18 +15,24 @@ public class CAgentMemory
 
     private int _agent_count = 1;
 
-    private Vector2D _pos;
+    private Vector2D _pos = null;
 
-    private int _map_width;
-    private int _map_height;
+    private int _map_width = 0;
+    private int _map_height = 0;
 
     private Cell[] _cells;
+
+    ArrayList<Cell> _golds;
+    ArrayList<Cell> _depots;
 
     public void SetAgenCount(int count) { _agent_count = count; }
     public int AgentCount() {return _agent_count;}
 
     public void InitCoord(StatusMessage sm)
     {
+        _golds = new ArrayList<Cell>();
+        _depots = new ArrayList<Cell>();
+
         _pos = new Vector2D(sm.agentX, sm.agentY);
 
         _map_width = sm.width;
@@ -42,6 +48,37 @@ public class CAgentMemory
         }*/
     }
 
+    public void RefreshEnviroment(StatusMessage sm, ArrayList<Vector2D> outNewObstacles, ArrayList<Vector2D> outNewGold, ArrayList<Vector2D> outNewDepots)
+    {
+        if(_pos == null)
+            InitCoord(sm);
+
+        _pos.x = sm.agentX;
+        _pos.y = sm.agentY;
+        sm.sensorInput.forEach(data ->
+        {
+            Cell c = _cells[CoordToIndex(data.x, data.y)];
+            if(data.type == StatusMessage.OBSTACLE && c.Passable)
+            {
+                c.Passable = false;
+                outNewObstacles.add(c.Pos);
+            }
+            if(data.type == StatusMessage.GOLD && !c.Gold)
+            {
+                c.Gold = true;
+                _golds.add(c);
+                outNewGold.add(c.Pos);
+            }
+            if(data.type == StatusMessage.DEPOT && !c.Depot)
+            {
+                c.Depot = true;
+                _depots.add(c);
+                outNewDepots.add(c.Pos);
+            }
+        });
+    }
+
+    private int CoordToIndex(int x, int y) { return y  * _map_width + x; }
     private int CoordToIndex(Vector2D pos) { return pos.y  * _map_width + pos.x; }
 
     private Vector2D IndexToCoord(int index)
@@ -51,11 +88,45 @@ public class CAgentMemory
         return new Vector2D(x, y);
     }
 
+    public void SetNewObstacles(ArrayList<Vector2D> coord_list)
+    {
+        coord_list.forEach(v -> _cells[CoordToIndex(v)].Passable = false);
+    }
+
+    public void SetNewGold(ArrayList<Vector2D> coord_list)
+    {
+        coord_list.forEach(v ->
+        {
+            Cell c = _cells[CoordToIndex(v)];
+            if(!c.Gold)
+            {
+                c.Gold = true;
+                _golds.add(c);
+            }
+        });
+    }
+
+    public void SetNewDepot(ArrayList<Vector2D> coord_list)
+    {
+        coord_list.forEach(v ->
+        {
+            Cell c = _cells[CoordToIndex(v)];
+            if(!c.Depot)
+            {
+                c.Depot = true;
+                _depots.add(c);
+            }
+        });
+    }
+
     class Cell implements Comparable<Cell>
     {
         public Vector2D Pos;
 
         public boolean Passable = true;
+
+        public boolean Gold = false;
+        public boolean Depot = false;
 
         public int WaveLength = 0;
         public long WaveNumber = Long.MIN_VALUE;
