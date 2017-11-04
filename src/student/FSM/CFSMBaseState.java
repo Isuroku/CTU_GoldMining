@@ -5,11 +5,11 @@ import mas.agents.StringMessage;
 import mas.agents.task.mining.StatusMessage;
 import student.Agent;
 import student.CAgentMemory;
+import student.Rect2D;
 import student.Vector2D;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public abstract class CFSMBaseState
 {
@@ -63,7 +63,67 @@ public abstract class CFSMBaseState
                 _owner.sendMessage(i, m);
     }
 
-    protected void RefreshEnviroment(StatusMessage sm) throws IOException
+    public StatusMessage left() throws Exception
+    {
+        StatusMessage sm = _owner.left();
+        RefreshEnviroment(sm);
+        return sm;
+    }
+
+    public StatusMessage right() throws Exception
+    {
+        StatusMessage sm = _owner.right();
+        RefreshEnviroment(sm);
+        return sm;
+    }
+
+    public StatusMessage up() throws Exception
+    {
+        StatusMessage sm = _owner.up();
+        RefreshEnviroment(sm);
+        return sm;
+    }
+
+    public StatusMessage down() throws Exception
+    {
+        StatusMessage sm = _owner.down();
+        RefreshEnviroment(sm);
+        return sm;
+    }
+
+    public StatusMessage pick() throws Exception
+    {
+        StatusMessage sm = _owner.pick();
+        RefreshEnviroment(sm);
+        return sm;
+    }
+
+    public StatusMessage drop() throws Exception
+    {
+        StatusMessage sm = _owner.drop();
+        RefreshEnviroment(sm);
+        return sm;
+    }
+
+    public StatusMessage sense() throws Exception
+    {
+        return sense(true);
+    }
+
+    public StatusMessage sense(boolean send) throws Exception
+    {
+        StatusMessage sm = _owner.sense();
+        if(send)
+            RefreshEnviroment(sm);
+        return sm;
+    }
+
+    CFSMBaseState(Agent owner)
+    {
+        _owner = owner;
+    }
+
+    protected void RefreshEnviroment(StatusMessage sm) throws Exception
     {
         ArrayList<Vector2D> new_obstacles = new ArrayList<>();
         ArrayList<Vector2D> new_golds = new ArrayList<>();
@@ -92,68 +152,6 @@ public abstract class CFSMBaseState
         }
 
         SendBroadcastMessage(new StringMessage(String.format("REnv:%s", sb)));
-    }
-
-
-
-    public StatusMessage left() throws IOException
-    {
-        StatusMessage sm = _owner.left();
-        RefreshEnviroment(sm);
-        return sm;
-    }
-
-    public StatusMessage right() throws IOException
-    {
-        StatusMessage sm = _owner.right();
-        RefreshEnviroment(sm);
-        return sm;
-    }
-
-    public StatusMessage up() throws IOException
-    {
-        StatusMessage sm = _owner.up();
-        RefreshEnviroment(sm);
-        return sm;
-    }
-
-    public StatusMessage down() throws IOException
-    {
-        StatusMessage sm = _owner.down();
-        RefreshEnviroment(sm);
-        return sm;
-    }
-
-    public StatusMessage pick() throws IOException
-    {
-        StatusMessage sm = _owner.pick();
-        RefreshEnviroment(sm);
-        return sm;
-    }
-
-    public StatusMessage drop() throws IOException
-    {
-        StatusMessage sm = _owner.drop();
-        RefreshEnviroment(sm);
-        return sm;
-    }
-
-    public StatusMessage sense() throws IOException
-    {
-        return sense(true);
-    }
-
-    public StatusMessage sense(boolean send) throws IOException
-    {
-        StatusMessage sm = _owner.sense();
-        if(send)
-            RefreshEnviroment(sm);
-        return sm;
-    }
-
-    CFSMBaseState(Agent owner)
-    {
-        _owner = owner;
     }
 
     protected Agent _owner;

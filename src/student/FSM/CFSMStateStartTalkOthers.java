@@ -32,7 +32,7 @@ public class CFSMStateStartTalkOthers extends CFSMBaseState
     }
 
     @Override
-    public void OnEnter(CFSMBaseState inPrevState) throws IOException
+    public void OnEnter(CFSMBaseState inPrevState) throws Exception
     {
         sense(false);
 

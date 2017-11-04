@@ -4,15 +4,15 @@ import student.Agent;
 
 import java.io.IOException;
 
-public class CFSMStateIdle extends CFSMBaseState
+public class CFSMStatePatrol extends CFSMBaseState
 {
-    public CFSMStateIdle(Agent owner)
+    public CFSMStatePatrol(Agent owner)
     {
         super(owner);
     }
 
     @Override
-    public EStateType GetStateType() { return EStateType.Idle; }
+    public EStateType GetStateType() { return EStateType.Patrol; }
 
     @Override
     public void OnEnter(CFSMBaseState inPrevState) throws Exception

@@ -1,3 +1,3 @@
 package student.FSM;
 
-public enum EStateType {TalkOne, TalkOthers, Idle}
+public enum EStateType {TalkOne, TalkOthers, Patrol, Idle}

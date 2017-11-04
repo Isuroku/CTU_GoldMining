@@ -20,6 +20,9 @@ public class CAgentMemory
     private int _map_width = 0;
     private int _map_height = 0;
 
+    public int MapWidth() {return _map_width;}
+    public int MapHeight() {return _map_height;}
+
     private Cell[] _cells;
 
     ArrayList<Cell> _golds;
@@ -28,7 +31,7 @@ public class CAgentMemory
     public void SetAgenCount(int count) { _agent_count = count; }
     public int AgentCount() {return _agent_count;}
 
-    public void InitCoord(StatusMessage sm)
+    public void InitCoord(StatusMessage sm) throws Exception
     {
         _golds = new ArrayList<Cell>();
         _depots = new ArrayList<Cell>();
@@ -42,13 +45,25 @@ public class CAgentMemory
         for(int i = 0; i < _cells.length; ++i)
             _cells[i] = new Cell( IndexToCoord(i) );
 
+        _owner.log(PatrolZone());
+
         /*if(_pos.x == 0 && _pos.y == 0)
         {
             Vector2D[] path = GetPath(new Vector2D(3, 3));
         }*/
     }
 
-    public void RefreshEnviroment(StatusMessage sm, ArrayList<Vector2D> outNewObstacles, ArrayList<Vector2D> outNewGold, ArrayList<Vector2D> outNewDepots)
+    protected Rect2D PatrolZone()
+    {
+        int w = _map_width / _agent_count + 1;
+        int l = w * (_owner.getAgentId() - 1);
+        int r = l + w;
+        if(r >= _map_width)
+            r = _map_width - 1;
+        return new Rect2D(l, r, 0, _map_height - 1);
+    }
+
+    public void RefreshEnviroment(StatusMessage sm, ArrayList<Vector2D> outNewObstacles, ArrayList<Vector2D> outNewGold, ArrayList<Vector2D> outNewDepots) throws Exception
     {
         if(_pos == null)
             InitCoord(sm);
