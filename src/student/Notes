@@ -1,0 +1,8 @@
+M = [0;1;2;3;4];
+width = 15;
+[Row, Col] = size(M);
+w = round(width/Row) - 1;
+w2 = w + 1;
+l = w2 .* M;
+r = l + w;
+miss = width - Row * w2;
