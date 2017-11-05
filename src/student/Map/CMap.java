@@ -17,7 +17,7 @@ public class CMap
 
     private CMapCell[] _cells;
 
-    //private Vector2D[] _agent_pos;
+    private CMapCell[] _agent_pos;
 
     private ArrayList<CMapCell> _golds = new ArrayList<>();
     private ArrayList<CMapCell> _depots = new ArrayList<>();
@@ -55,12 +55,17 @@ public class CMap
         }*/
     }
 
-    public void SetNewObstacles(ArrayList<Vector2D> coord_list)
+    public void SetAgentCount(int count)
+    {
+        _agent_pos = new CMapCell[count];
+    }
+
+    public void SetNewObstacles(Iterable<Vector2D> coord_list)
     {
         coord_list.forEach(v -> GetCell(v).SetObstacle());
     }
 
-    public void SetNewGold(ArrayList<Vector2D> coord_list)
+    public void SetNewGold(Iterable<Vector2D> coord_list)
     {
         coord_list.forEach(v ->
         {
@@ -73,7 +78,7 @@ public class CMap
         });
     }
 
-    public void SetNewDepot(ArrayList<Vector2D> coord_list)
+    public void SetNewDepot(Iterable<Vector2D> coord_list)
     {
         coord_list.forEach(v ->
         {
@@ -101,17 +106,30 @@ public class CMap
     public void SetOtherAgentPos(int inAgentId, Vector2D inPos) throws Exception
     {
         _owner.log(String.format("SetOtherAgentPos: Agent %d in pos %s", inAgentId, inPos), true);
-        /*if(_agent_pos[inAgentId - 1] != null)
-        {
-            CMapCell c = GetCell(_agent_pos[inAgentId - 1]);
-            c.AgentId = 0;
-        }
-        _agent_pos[inAgentId - 1] = inPos;*/
+
+        CMapCell old_cell = _agent_pos[inAgentId - 1];
+        if(old_cell != null)
+            old_cell.AgentId = 0;
+
         CMapCell c = GetCell(inPos);
         c.AgentId = inAgentId;
+        _agent_pos[inAgentId - 1] = c;
     }
 
-    public void RefreshEnviroment(StatusMessage sm, ArrayList<Vector2D> outNewObstacles, ArrayList<Vector2D> outNewGold, ArrayList<Vector2D> outNewDepots) throws Exception
+    public void SetAgentPos(int inAgentId, Vector2D inPos) throws Exception
+    {
+        _owner.log(String.format("SetAgentPos: Agent %d in pos %s", inAgentId, inPos), true);
+
+        CMapCell old_cell = _agent_pos[inAgentId - 1];
+        if(old_cell != null)
+            old_cell.AgentId = 0;
+
+        CMapCell c = GetCell(inPos);
+        c.AgentId = inAgentId;
+        _agent_pos[inAgentId - 1] = c;
+    }
+
+    public void RefreshEnvironment(StatusMessage sm, ArrayList<Vector2D> outNewObstacles, ArrayList<Vector2D> outNewGold, ArrayList<Vector2D> outNewDepots) throws Exception
     {
         sm.sensorInput.forEach(data ->
         {

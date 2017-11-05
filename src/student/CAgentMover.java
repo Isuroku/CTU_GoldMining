@@ -2,6 +2,7 @@ package student;
 
 import mas.agents.StringMessage;
 import mas.agents.task.mining.StatusMessage;
+import student.Messages.CMessageLetPass;
 
 public class CAgentMover
 {
@@ -61,14 +62,14 @@ public class CAgentMover
         Vector2D our_pos = _owner.Memory.Position();
         Vector2D step_pos = _path[_index];
 
-        int passably = _owner.Memory.GetPassably(step_pos);
+        int agent_id = _owner.Memory.GetPassably(step_pos);
 
-        if(passably == 0)
+        if(agent_id == 0)
             return EStepResult.Obstacle;
 
-        if(passably > 0)
+        if(agent_id > 0)
         {
-            if(passably > _owner.getAgentId())
+            if(agent_id > _owner.getAgentId())
             {
                 Vector2D free_pos = GetFreePosition();
                 if(free_pos != null)
@@ -77,7 +78,7 @@ public class CAgentMover
                     ResetPath();
                 }
                 else
-                    _owner.sendMessage(passably, new StringMessage("letpass"));
+                    _owner.SendMessage(agent_id, new CMessageLetPass(_owner.getAgentId()));
             }
             else
                 return EStepResult.AgentLower;
@@ -125,28 +126,28 @@ public class CAgentMover
     public StatusMessage Left() throws Exception
     {
         StatusMessage sm = _owner.left();
-        Memory().RefreshEnviroment(sm);
+        Memory().RefreshEnvironment(sm);
         return sm;
     }
 
     public StatusMessage Right() throws Exception
     {
         StatusMessage sm = _owner.right();
-        Memory().RefreshEnviroment(sm);
+        Memory().RefreshEnvironment(sm);
         return sm;
     }
 
     public StatusMessage Up() throws Exception
     {
         StatusMessage sm = _owner.up();
-        Memory().RefreshEnviroment(sm);
+        Memory().RefreshEnvironment(sm);
         return sm;
     }
 
     public StatusMessage Down() throws Exception
     {
         StatusMessage sm = _owner.down();
-        Memory().RefreshEnviroment(sm);
+        Memory().RefreshEnvironment(sm);
         return sm;
     }
 

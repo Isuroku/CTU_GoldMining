@@ -32,6 +32,8 @@ public class CFSMStatePatrol extends CFSMBaseState
     @Override
     public void Update(long inUpdateNumber) throws Exception
     {
+
+
         EStepResult step_res = Mover().Step();
         if(step_res == EStepResult.NoPath || step_res == EStepResult.Obstacle)
             ChangeTarget();

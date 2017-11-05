@@ -6,6 +6,7 @@ import mas.agents.SimulationApi;
 import mas.agents.StringMessage;
 import mas.agents.task.mining.*;
 import student.FSM.*;
+import student.Messages.CMessageBase;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,8 +53,13 @@ public class Agent extends AbstractAgent
 
             while (messageAvailable()) {
                 Message m = readMessage();
-                Memory.OnMessage(m);
-                _fsm.state().OnMessage(m);
+
+                CMessageBase msg = CMessageBase.CreateMessage(m.getSender(), m.stringify());
+                LogMessage(msg);
+
+                Memory.OnMessage(msg);
+
+                _fsm.state().OnMessage(msg);
             }
 
             _fsm.state().Update(++_update_counter);
@@ -81,5 +87,22 @@ public class Agent extends AbstractAgent
     {
         if(print)
             log(obj);
+    }
+
+    void LogMessage(CMessageBase msg) throws Exception
+    {
+        log(msg.toString());
+    }
+
+    public void SendMessage(int Recipient, CMessageBase msg) throws Exception
+    {
+        sendMessage(Recipient, msg.CodeToMessage());
+    }
+
+    public void SendBroadcastMessage(CMessageBase msg) throws Exception
+    {
+        for(int i = 1; i <= Memory.AgentCount(); i++)
+            if(i != getAgentId())
+                SendMessage(i, msg);
     }
 }

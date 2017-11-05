@@ -2,10 +2,11 @@ package student.FSM;
 
 import mas.agents.Message;
 import mas.agents.StringMessage;
-import mas.agents.task.mining.StatusMessage;
 import student.Agent;
-
-import java.io.IOException;
+import student.Messages.CMessageAgentCount;
+import student.Messages.CMessageBase;
+import student.Messages.CMessageHello;
+import student.Messages.EMessageType;
 
 public class CFSMStateStartTalkOthers extends CFSMBaseState
 {
@@ -17,16 +18,13 @@ public class CFSMStateStartTalkOthers extends CFSMBaseState
     @Override
     public EStateType GetStateType() { return EStateType.TalkOthers; }
 
-    public void OnMessage(Message inMessage) throws Exception
+    public void OnMessage(CMessageBase inMessage) throws Exception
     {
         super.OnMessage(inMessage);
 
-        String msg_text = inMessage.stringify();
-
-        if(msg_text.startsWith("AgentCount"))
+        if(inMessage.MessageType() == EMessageType.AgentCount)
         {
-            String s = msg_text.substring("AgentCount".length() + 1);
-            Memory().SetAgenCount(Integer.parseInt(s));
+            Memory().SetAgentCount(((CMessageAgentCount)inMessage).Count());
             Sense();
             _owner.SwitchState(this, EStateType.Patrol);
         }
@@ -36,8 +34,7 @@ public class CFSMStateStartTalkOthers extends CFSMBaseState
     public void OnEnter(CFSMBaseState inPrevState) throws Exception
     {
         Sense(false);
-
-        SendMessage(1, new StringMessage("Hello"));
+        _owner.SendMessage(1, new CMessageHello(_owner.getAgentId()));
     }
 
     @Override
