@@ -11,7 +11,7 @@ public class CFreeFSM
         _state = state;
     }
 
-    public void Switch(CFSMBaseState inOldState, CFSMBaseState inNewState) throws Exception
+    public void Switch(CFSMBaseState inNewState) throws Exception
     {
         CFSMBaseState old = _state;
         _state = inNewState;

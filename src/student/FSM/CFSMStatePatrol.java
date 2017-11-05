@@ -2,6 +2,9 @@ package student.FSM;
 
 import student.Agent;
 import student.EStepResult;
+import student.Messages.CMessageBase;
+import student.Messages.CMessageTakeGold;
+import student.Messages.EMessageType;
 import student.Rect2D;
 import student.Vector2D;
 
@@ -15,13 +18,23 @@ public class CFSMStatePatrol extends CFSMBaseState
     @Override
     public EStateType GetStateType() { return EStateType.Patrol; }
 
+    public void OnMessage(CMessageBase inMessage) throws Exception
+    {
+        super.OnMessage(inMessage);
+
+        if(inMessage.MessageType() == EMessageType.TakeGold)
+        {
+            CFSMStateTakeGold state = (CFSMStateTakeGold) _owner.SwitchState(EStateType.TakeGold);
+            state.SetGold(((CMessageTakeGold)inMessage).GoldPos());
+        }
+    }
+
     @Override
     public void OnEnter(CFSMBaseState inPrevState) throws Exception
     {
         Sense();
         ChangeTarget();
     }
-
 
     @Override
     public void OnExit()
@@ -32,8 +45,6 @@ public class CFSMStatePatrol extends CFSMBaseState
     @Override
     public void Update(long inUpdateNumber) throws Exception
     {
-
-
         EStepResult step_res = Mover().Step();
         if(step_res == EStepResult.NoPath || step_res == EStepResult.Obstacle)
             ChangeTarget();
@@ -49,6 +60,10 @@ public class CFSMStatePatrol extends CFSMBaseState
             return new Vector2D(inZone.Left, inPos.y);
         if(inPos.x > inZone.Right)
             return new Vector2D(inZone.Right, inPos.y);
+
+        Vector2D pos = Memory().GetFirstDarkPoint();
+        if(pos != null)
+            return pos;
 
         int x = inPos.x;
         int y = inPos.y;
@@ -92,7 +107,7 @@ public class CFSMStatePatrol extends CFSMBaseState
             return;
         }
 
-        _owner.log(String.format("Change target: %s", target), true);
+        _owner.log(String.format("Change target: %s", target), false);
         //return true;
     }
 }

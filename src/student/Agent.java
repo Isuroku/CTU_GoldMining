@@ -7,6 +7,8 @@ import mas.agents.StringMessage;
 import mas.agents.task.mining.*;
 import student.FSM.*;
 import student.Messages.CMessageBase;
+import student.Messages.CMessageChangeState;
+import student.Messages.EMessageType;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +24,7 @@ public class Agent extends AbstractAgent
     long _update_counter = 0;
 
     public CAgentMemory Memory;
+    public CCoordinator Coordinator;
     public CAgentMover Mover;
 
     public Agent(int id, InputStream is, OutputStream os, SimulationApi api) throws Exception
@@ -32,12 +35,12 @@ public class Agent extends AbstractAgent
         Mover = new CAgentMover(this);
 
         if(id == 1)
-            _states.add(new CFSMStateStartTalkOne(this));
-        else
-            _states.add(new CFSMStateStartTalkOthers(this));
+            Coordinator = new CCoordinator(this);
 
         _states.add(new CFSMStateIdle(this));
         _states.add(new CFSMStatePatrol(this));
+        _states.add(new CFSMStateTakeGold(this));
+        _states.add(new CFSMStateGoldToDepot(this));
 
         _fsm = new CFreeFSM(_states.get(0));
     }
@@ -55,14 +58,22 @@ public class Agent extends AbstractAgent
                 Message m = readMessage();
 
                 CMessageBase msg = CMessageBase.CreateMessage(m.getSender(), m.stringify());
-                LogMessage(msg);
+                LogMessage(0, msg);
 
                 Memory.OnMessage(msg);
+
+                if(Coordinator != null)
+                    Coordinator.OnMessage(msg);
 
                 _fsm.state().OnMessage(msg);
             }
 
-            _fsm.state().Update(++_update_counter);
+            ++_update_counter;
+
+            if(Coordinator != null)
+                Coordinator.Update(_update_counter);
+
+            _fsm.state().Update(_update_counter);
 
             try {
                 Thread.sleep(200);
@@ -70,17 +81,24 @@ public class Agent extends AbstractAgent
         }
     }
 
-    public void SwitchState(CFSMBaseState inOldState, EStateType inStateType) throws Exception
+    public CFSMBaseState SwitchState(EStateType inStateType) throws Exception
     {
         for(int i = 0; i < _states.size(); ++i)
+        {
             if(_states.get(i).GetStateType() == inStateType)
             {
-                _fsm.Switch(inOldState, _states.get(i));
-                log(String.format("change state from %s to %s", inOldState.GetStateType(), inStateType));
-                return;
-            }
+                EStateType old_state = _fsm.state().GetStateType();
+                _fsm.Switch(_states.get(i));
+                log(String.format("change state from %s to %s", old_state, inStateType));
 
-        log(String.format("SwitchState ERROR: can't find state %s", inStateType));
+                Memory.SetAgentState(getAgentId(), _fsm.state().GetStateType());
+                SendBroadcastMessage(new CMessageChangeState(getAgentId(), _fsm.state().GetStateType()));
+
+                return _fsm.state();
+            }
+        }
+
+        throw new RuntimeException(String.format("Can't find state %s", inStateType));
     }
 
     public void log(Object obj, boolean print) throws Exception
@@ -89,20 +107,28 @@ public class Agent extends AbstractAgent
             log(obj);
     }
 
-    void LogMessage(CMessageBase msg) throws Exception
+    void LogMessage(int Recipient, CMessageBase msg) throws Exception
     {
-        log(msg.toString());
+        if(msg.MessageType() == EMessageType.TakeGold ||
+                msg.MessageType() == EMessageType.GoldPicked)
+            log(String.format("%s%s", Recipient == 0 ? "Receive: " : "Send to " + Recipient + ": ", msg.toString()));
     }
 
     public void SendMessage(int Recipient, CMessageBase msg) throws Exception
     {
+        LogMessage(Recipient, msg);
         sendMessage(Recipient, msg.CodeToMessage());
     }
 
     public void SendBroadcastMessage(CMessageBase msg) throws Exception
     {
+        LogMessage(100, msg);
         for(int i = 1; i <= Memory.AgentCount(); i++)
+        {
             if(i != getAgentId())
                 SendMessage(i, msg);
+            else if(Coordinator != null)
+                Coordinator.OnMessage(msg);
+        }
     }
 }

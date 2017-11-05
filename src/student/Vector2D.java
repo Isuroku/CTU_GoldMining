@@ -116,4 +116,24 @@ public class Vector2D
 
         return arr.toArray(new Vector2D[arr.size()]);
     }
+
+    public Vector2D[] GetNeighbourhoodPoses(Rect2D inZone)
+    {
+        ArrayList<Vector2D> arr = new ArrayList<>();
+
+        for(int nx = x - 1; nx <= x + 1; nx++)
+            for(int ny = y - 1; ny <= y + 1; ny++)
+                if(inZone == null || (nx >= inZone.Left && nx <= inZone.Right && ny >= inZone.Top && ny <= inZone.Bottom))
+                    arr.add(new Vector2D(nx, ny));
+
+        return arr.toArray(new Vector2D[arr.size()]);
+    }
+
+    public boolean IsNeighbour(Vector2D pos)
+    {
+        int dx = pos.x - x;
+        int dy = pos.y - y;
+
+        return dx == 0 && Math.abs(dy) == 1 || dy == 0 && Math.abs(dx) == 1;
+    }
 }

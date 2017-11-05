@@ -1,6 +1,5 @@
 package student;
 
-import mas.agents.StringMessage;
 import mas.agents.task.mining.StatusMessage;
 import student.Messages.CMessageLetPass;
 
@@ -11,10 +10,17 @@ public class CAgentMover
         _owner = owner;
     }
 
+    Agent _owner;
+
+    Vector2D[] _path;
+    int _index;
+
+    CAgentMemory Memory() { return _owner.Memory; }
+
     public Vector2D GetTarget()
     {
         if(_path != null)
-           return _path[_path.length - 1];
+            return _path[_path.length - 1];
         return null;
     }
 
@@ -28,13 +34,6 @@ public class CAgentMover
 
         return _path != null;
     }
-
-    Agent _owner;
-
-    Vector2D[] _path;
-    int _index;
-
-    CAgentMemory Memory() { return _owner.Memory; }
 
     void ResetPath()
     {
@@ -65,7 +64,10 @@ public class CAgentMover
         int agent_id = _owner.Memory.GetPassably(step_pos);
 
         if(agent_id == 0)
+        {
+            ResetPath();
             return EStepResult.Obstacle;
+        }
 
         if(agent_id > 0)
         {
@@ -96,7 +98,7 @@ public class CAgentMover
 
         if(dx == 0 && dy == 0 || dx != 0 && dy != 0)
         {
-            _owner.log( String.format("Error Step: dx %d, dy %d", dx, dy), true);
+            _owner.log( String.format("Error Step: dx %d, dy %d", dx, dy), false);
             return EStepResult.ErrorCalcNextPos;
         }
 
@@ -112,12 +114,12 @@ public class CAgentMover
 
         if(Memory().Position().equals(pos))
         {
-            _owner.log(String.format("Step: change pos into %s", pos), true);
+            _owner.log(String.format("Step: change pos into %s", pos), false);
 
             res = EStepResult.StepDone;
             _index++;
         }
-        else
+        else if(!Memory().Position().IsNeighbour(pos))
             _owner.log(String.format("Step: can't do step into %s", pos), true);
 
         return res;

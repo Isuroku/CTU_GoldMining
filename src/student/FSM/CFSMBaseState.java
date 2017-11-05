@@ -43,8 +43,7 @@ public abstract class CFSMBaseState
     public StatusMessage Sense(boolean send) throws Exception
     {
         StatusMessage sm = _owner.sense();
-        if(send)
-            Memory().RefreshEnvironment(sm);
+        Memory().RefreshEnvironment(sm, send);
         return sm;
     }
 

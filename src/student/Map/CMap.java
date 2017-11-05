@@ -3,11 +3,13 @@ package student.Map;
 import mas.agents.task.mining.StatusMessage;
 import student.CAgentMemory;
 import student.CBinaryHeap;
+import student.FSM.EStateType;
 import student.Rect2D;
 import student.Vector2D;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 
 public class CMap
 {
@@ -47,7 +49,10 @@ public class CMap
 
         _cells = new CMapCell[MapWidth() * MapHeight()];
         for(int i = 0; i < _cells.length; ++i)
-            _cells[i] = new CMapCell( IndexToCoord(i) );
+        {
+            Vector2D p = IndexToCoord(i);
+            _cells[i] = new CMapCell(p);
+        }
 
         /*if(_pos.x == 0 && _pos.y == 0)
         {
@@ -105,7 +110,10 @@ public class CMap
 
     public void SetOtherAgentPos(int inAgentId, Vector2D inPos) throws Exception
     {
-        _owner.log(String.format("SetOtherAgentPos: Agent %d in pos %s", inAgentId, inPos), true);
+        if(_agent_pos == null)
+            return;
+
+        _owner.Log(String.format("SetOtherAgentPos: Agent %d in pos %s", inAgentId, inPos), false);
 
         CMapCell old_cell = _agent_pos[inAgentId - 1];
         if(old_cell != null)
@@ -116,20 +124,11 @@ public class CMap
         _agent_pos[inAgentId - 1] = c;
     }
 
-    public void SetAgentPos(int inAgentId, Vector2D inPos) throws Exception
-    {
-        _owner.log(String.format("SetAgentPos: Agent %d in pos %s", inAgentId, inPos), true);
-
-        CMapCell old_cell = _agent_pos[inAgentId - 1];
-        if(old_cell != null)
-            old_cell.AgentId = 0;
-
-        CMapCell c = GetCell(inPos);
-        c.AgentId = inAgentId;
-        _agent_pos[inAgentId - 1] = c;
-    }
-
-    public void RefreshEnvironment(StatusMessage sm, ArrayList<Vector2D> outNewObstacles, ArrayList<Vector2D> outNewGold, ArrayList<Vector2D> outNewDepots) throws Exception
+    public void RefreshEnvironment(StatusMessage sm,
+                                   ArrayList<Vector2D> outNewObstacles,
+                                   ArrayList<Vector2D> outNewGold,
+                                   ArrayList<Vector2D> outNewDepots,
+                                   ArrayList<Vector2D> outAgents) throws Exception
     {
         sm.sensorInput.forEach(data ->
         {
@@ -151,6 +150,8 @@ public class CMap
                 _depots.add(c);
                 outNewDepots.add(c.Pos);
             }
+            if(data.type == StatusMessage.AGENT)
+                outAgents.add(c.Pos);
         });
     }
 
@@ -164,7 +165,7 @@ public class CMap
         return _cells[index];
     }
 
-    int[] ClosestAgent(Vector2D target)
+    public Integer[] ClosestFreeAgent(Vector2D target)
     {
         CMapCell s_cell = GetCell(target);
 
@@ -178,21 +179,16 @@ public class CMap
         set.Insert(s_cell);
 
         int need_count = 2;
-        int[] agents = new int[need_count];
+        ArrayList<Integer> agents = new ArrayList<>();
 
-        int agent_count = 0;
-        while(!set.IsEmpty() && agent_count < need_count)
+        while(!set.IsEmpty() && agents.size() < need_count)
         {
-            CMapCell cell = (CMapCell)set.FindMin();
-            set.DeleteMin();
+            CMapCell cell = (CMapCell)set.DeleteMin();
 
-            if(cell.AgentId > 0)
-            {
-                agents[agent_count] = cell.AgentId;
-                agent_count++;
-            }
+            if(cell.AgentId > 0 && _owner.GetAgentState(cell.AgentId) == EStateType.Patrol)
+                agents.add(cell.AgentId);
 
-            if(agent_count < need_count)
+            if(agents.size() < need_count)
             {
                 Vector2D[] neighbours = cell.Pos.GetNeighbours(_map_rect);
                 for(Vector2D p : neighbours)
@@ -203,7 +199,7 @@ public class CMap
             }
         }
 
-        return agents;
+        return agents.toArray(new Integer[agents.size()]);
     }
 
     private long _wave_number = Long.MIN_VALUE;
@@ -269,4 +265,99 @@ public class CMap
         set.Insert(next);
     }
 
+    public boolean IsGoldPresent() { return !_golds.isEmpty(); }
+    public Vector2D[] GetGolds()
+    {
+        Vector2D[] arr = new Vector2D[_golds.size()];
+        for(int i = 0; i < _golds.size(); ++i)
+            arr[i] = _golds.get(i).Pos;
+        return arr;
+    }
+
+    public boolean IsDepotsPresent() { return !_depots.isEmpty(); }
+    public Vector2D[] GetDepots()
+    {
+        Vector2D[] arr = new Vector2D[_depots.size()];
+        for(int i = 0; i < _depots.size(); ++i)
+            arr[i] = _depots.get(i).Pos;
+        return arr;
+    }
+
+    public boolean IsAgentAroundMePresent(Vector2D pos)
+    {
+        Vector2D[] neighbours = pos.GetNeighbours(_map_rect);
+        for(Vector2D p : neighbours)
+        {
+            CMapCell n = GetCell(p);
+            if(n.AgentId > 0)
+                return true;
+        }
+
+        return false;
+    }
+
+    public void DeleteGold(Vector2D inGoldPos)
+    {
+        for(int i = 0; i < _golds.size(); ++i)
+        {
+            CMapCell cell = _golds.get(i);
+
+            if(cell.Pos.equals(inGoldPos))
+            {
+                cell.Gold = false;
+                _golds.remove(i);
+                return;
+            }
+        }
+    }
+
+    public boolean IsOtherAgentOnCell(Vector2D pos)
+    {
+        CMapCell cell = GetCell(pos);
+        return cell.AgentId > 0;
+    }
+
+    public Vector2D GetFreeNeighbourCell(Vector2D pos)
+    {
+        Vector2D[] neighbours = pos.GetNeighbours(_map_rect);
+        for(Vector2D p : neighbours)
+        {
+            CMapCell n = GetCell(p);
+            if(n.IsPassable(true))
+                return n.Pos;
+        }
+
+        return null;
+    }
+
+    public Vector2D GetNearestDepot(Vector2D our_pos)
+    {
+        CMapCell s_cell = GetCell(our_pos);
+
+        _wave_number++;
+
+        s_cell.Prev = null;
+        s_cell.WaveLength = 0;
+        s_cell.WaveNumber = _wave_number;
+
+        CBinaryHeap set = new CBinaryHeap();
+        set.Insert(s_cell);
+
+        while(!set.IsEmpty())
+        {
+            CMapCell cell = (CMapCell)set.DeleteMin();
+
+            if(cell.Depot)
+                return cell.Pos;
+
+            Vector2D[] neighbours = cell.Pos.GetNeighbours(_map_rect);
+            for(Vector2D p : neighbours)
+            {
+                CMapCell n = GetCell(p);
+                SetInWave(cell, n, set);
+            }
+        }
+
+        throw new RuntimeException("Can't find path to any depots!");
+    }
 }

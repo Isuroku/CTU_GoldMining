@@ -43,6 +43,9 @@ public abstract class CMessageBase
             case AgentCount: msg = new CMessageAgentCount(SenderId); break;
             case LetPass: msg = new CMessageLetPass(SenderId); break;
             case REnv: msg = new CMessageRefreshEnvironment(SenderId); break;
+            case ChangeState: msg = new CMessageChangeState(SenderId); break;
+            case TakeGold: msg = new CMessageTakeGold(SenderId); break;
+            case GoldPicked: msg = new CMessageGoldPicked(SenderId); break;
         }
 
         if(msg != null && msg.Init(inMsgBody))

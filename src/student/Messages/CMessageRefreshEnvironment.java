@@ -24,6 +24,12 @@ public class CMessageRefreshEnvironment extends CMessageBase
     public EMessageType MessageType() { return EMessageType.REnv; }
 
     @Override
+    public String toString()
+    {
+        return super.toString() + String.format("Data: %s", GetBodyCoding());
+    }
+
+    @Override
     public boolean Init(String inMsgBody)
     {
         String[] arr = inMsgBody.split(";");
