@@ -5,8 +5,6 @@ import student.EStepResult;
 import student.Rect2D;
 import student.Vector2D;
 
-import java.io.IOException;
-
 public class CFSMStatePatrol extends CFSMBaseState
 {
     public CFSMStatePatrol(Agent owner)
@@ -41,9 +39,9 @@ public class CFSMStatePatrol extends CFSMBaseState
 
 
 
-    Vector2D _dir = new Vector2D(1, 1);
+    private Vector2D _dir = new Vector2D(1, 1);
 
-    Vector2D GetNexTarget(Rect2D inZone, Vector2D inPos)
+    private Vector2D GetNexTarget(Rect2D inZone, Vector2D inPos)
     {
         if(inPos.x < inZone.Left)
             return new Vector2D(inZone.Left, inPos.y);
@@ -66,7 +64,7 @@ public class CFSMStatePatrol extends CFSMBaseState
         return new Vector2D(x, y);
     }
 
-    boolean ChangeTarget() throws Exception
+    private void ChangeTarget() throws Exception
     {
         Vector2D our_pos = Memory().Position();
         Rect2D z = Memory().PatrolZone();
@@ -89,10 +87,10 @@ public class CFSMStatePatrol extends CFSMBaseState
         if(circle_count == 0)
         {
             _owner.log("Error ChangeTarget: Can't find new target in patrol!", true);
-            return false;
+            return;
         }
 
         _owner.log(String.format("Change target: %s", target), true);
-        return true;
+        //return true;
     }
 }

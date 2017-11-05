@@ -2,20 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="87674034-0c22-4db2-9031-45761af667b4" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/student/CAgentMover.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/student/CMap.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/student/EStepResult.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/student/Map/CMap.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/student/Map/CMapCell.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/student/CMap.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/mas/agents/AbstractAgent.java" afterPath="$PROJECT_DIR$/src/mas/agents/AbstractAgent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/student/Agent.java" afterPath="$PROJECT_DIR$/src/student/Agent.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/student/CAgentMemory.java" afterPath="$PROJECT_DIR$/src/student/CAgentMemory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/student/FSM/CFSMBaseState.java" afterPath="$PROJECT_DIR$/src/student/FSM/CFSMBaseState.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/student/FSM/CFSMStateIdle.java" afterPath="$PROJECT_DIR$/src/student/FSM/CFSMStateIdle.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/student/FSM/CFSMStatePatrol.java" afterPath="$PROJECT_DIR$/src/student/FSM/CFSMStatePatrol.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/student/FSM/CFSMStateStartTalkOne.java" afterPath="$PROJECT_DIR$/src/student/FSM/CFSMStateStartTalkOne.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/student/FSM/CFSMStateStartTalkOthers.java" afterPath="$PROJECT_DIR$/src/student/FSM/CFSMStateStartTalkOthers.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/student/Rect2D.java" afterPath="$PROJECT_DIR$/src/student/Rect2D.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/student/Vector2D.java" afterPath="$PROJECT_DIR$/src/student/Vector2D.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -30,8 +22,8 @@
       <file leaf-file-name="Agent.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/student/Agent.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="218">
-              <caret line="58" column="0" lean-forward="false" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
+            <state relative-caret-position="617">
+              <caret line="79" column="63" lean-forward="true" selection-start-line="79" selection-start-column="4" selection-end-line="79" selection-end-column="63" />
               <folding />
             </state>
           </provider>
@@ -40,41 +32,42 @@
       <file leaf-file-name="CAgentMemory.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/student/CAgentMemory.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="370">
-              <caret line="181" column="10" lean-forward="false" selection-start-line="181" selection-start-column="10" selection-end-line="181" selection-end-column="10" />
+            <state relative-caret-position="399">
+              <caret line="21" column="5" lean-forward="true" selection-start-line="21" selection-start-column="5" selection-end-line="21" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#235#236#0" expanded="true" />
-                <element signature="e#265#266#0" expanded="true" />
-                <element signature="e#3364#3365#0" expanded="true" />
-                <element signature="e#3429#3430#0" expanded="true" />
-                <element signature="method#GetCell#0;class#CAgentMemory#0" expanded="false" />
-                <element signature="e#8619#8629#0" expanded="true" />
-                <element signature="method#SetInWave#0;class#CAgentMemory#0" expanded="false" />
-                <element signature="method#OnMessage#0;class#CAgentMemory#0" expanded="false" />
-                <element signature="method#RefreshEnviroment#1;class#CAgentMemory#0" expanded="false" />
+                <element signature="e#4871#4872#0" expanded="true" />
+                <element signature="e#4914#4915#0" expanded="true" />
+                <element signature="e#5118#5119#0" expanded="true" />
+                <element signature="e#5166#5167#0" expanded="true" />
+                <element signature="e#5204#5205#0" expanded="true" />
+                <element signature="e#5244#5245#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CMap.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/student/CMap.java">
+      <file leaf-file-name="CMapCell.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/student/Map/CMapCell.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="38">
-              <caret line="2" column="17" lean-forward="false" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
+            <state relative-caret-position="513">
+              <caret line="27" column="37" lean-forward="true" selection-start-line="27" selection-start-column="37" selection-end-line="27" selection-end-column="37" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Rect2D.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/student/Rect2D.java">
+      <file leaf-file-name="CMap.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/student/Map/CMap.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+            <state relative-caret-position="-1266">
+              <caret line="27" column="5" lean-forward="true" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
               <folding>
-                <element signature="e#532#533#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#549#550#0" expanded="true" />
+                <element signature="e#579#580#0" expanded="true" />
+                <element signature="e#1579#1580#0" expanded="true" />
+                <element signature="e#1644#1645#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -95,11 +88,10 @@
       <file leaf-file-name="CFSMStatePatrol.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/student/FSM/CFSMStatePatrol.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="745">
-              <caret line="94" column="67" lean-forward="false" selection-start-line="94" selection-start-column="67" selection-end-line="94" selection-end-column="67" />
+            <state relative-caret-position="1197">
+              <caret line="66" column="48" lean-forward="true" selection-start-line="66" selection-start-column="48" selection-end-line="66" selection-end-column="48" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="method#GetNexTarget#0;class#CFSMStatePatrol#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -108,36 +100,14 @@
       <file leaf-file-name="CAgentMover.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/student/CAgentMover.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="42" column="0" lean-forward="true" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
+            <state relative-caret-position="260">
+              <caret line="160" column="23" lean-forward="false" selection-start-line="160" selection-start-column="23" selection-end-line="160" selection-end-column="23" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#157#158#0" expanded="true" />
                 <element signature="e#187#188#0" expanded="true" />
                 <element signature="method#Right#0;class#CAgentMover#0" expanded="false" />
                 <element signature="method#Up#0;class#CAgentMover#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Environment.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/mas/agents/task/mining/Environment.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="226">
-              <caret line="56" column="0" lean-forward="false" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Vector2D.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/student/Vector2D.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="484">
-              <caret line="113" column="49" lean-forward="false" selection-start-line="113" selection-start-column="49" selection-end-line="113" selection-end-column="49" />
-              <folding>
-                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -156,11 +126,15 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>_agent_pos</find>
       <find>thr</find>
       <find>_cells[CoordToIndex</find>
       <find>_cells</find>
+      <find>Cell</find>
+      <find>_agent_pos</find>
     </findStrings>
+    <replaceStrings>
+      <replace>CMapCell</replace>
+    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -173,10 +147,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/student/CanPickMessage.java" />
-        <option value="$PROJECT_DIR$/src/student/CanMoveMessage.java" />
-        <option value="$PROJECT_DIR$/src/student/HelpMessage.java" />
-        <option value="$PROJECT_DIR$/src/map.txt" />
         <option value="$PROJECT_DIR$/src/maps/easy.txt" />
         <option value="$PROJECT_DIR$/src/student/DepotFoundMessage.java" />
         <option value="$PROJECT_DIR$/src/student/GoldFoundMessage.java" />
@@ -220,10 +190,14 @@
         <option value="$PROJECT_DIR$/src/student/Agent.java" />
         <option value="$PROJECT_DIR$/src/mas/agents/AbstractAgent.java" />
         <option value="$PROJECT_DIR$/src/student/FSM/CFSMBaseState.java" />
-        <option value="$PROJECT_DIR$/src/student/FSM/CFSMStatePatrol.java" />
         <option value="$PROJECT_DIR$/src/student/Vector2D.java" />
         <option value="$PROJECT_DIR$/src/student/CAgentMover.java" />
+        <option value="$PROJECT_DIR$/src/student/CMap.java" />
         <option value="$PROJECT_DIR$/src/student/CAgentMemory.java" />
+        <option value="$PROJECT_DIR$/src/student/FSM/CFSMStatePatrol.java" />
+        <option value="$PROJECT_DIR$/src/student/CMapCell.java" />
+        <option value="$PROJECT_DIR$/src/student/Map/CMapCell.java" />
+        <option value="$PROJECT_DIR$/src/student/Map/CMap.java" />
       </list>
     </option>
   </component>
@@ -279,6 +253,13 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="student" type="462c0819:PsiDirectoryNode" />
               <item name="FSM" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CTU_GoldMining" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CTU_GoldMining" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="student" type="462c0819:PsiDirectoryNode" />
+              <item name="Map" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -457,12 +438,12 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1525941" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15666327" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16480163" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16480163" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18245426" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -500,18 +481,11 @@
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="63" />
+      <option name="time" value="64" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/maps/task7.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="2" lean-forward="false" selection-start-line="10" selection-start-column="2" selection-end-line="10" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/maps/task1.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
@@ -629,14 +603,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="442">
           <caret line="84" column="5" lean-forward="true" selection-start-line="81" selection-start-column="4" selection-end-line="84" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/student/CBinaryHeap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="45" column="62" lean-forward="true" selection-start-line="45" selection-start-column="12" selection-end-line="45" selection-end-column="62" />
           <folding />
         </state>
       </provider>
@@ -805,17 +771,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/student/FSM/CFSMStatePatrol.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="745">
-          <caret line="94" column="67" lean-forward="false" selection-start-line="94" selection-start-column="67" selection-end-line="94" selection-end-column="67" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#GetNexTarget#0;class#CFSMStatePatrol#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://F:/Java9/lib/src.zip!/java.base/java/lang/Object.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="226">
@@ -870,16 +825,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/student/Agent.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="218">
-          <caret line="58" column="0" lean-forward="false" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
+        <state relative-caret-position="617">
+          <caret line="79" column="63" lean-forward="true" selection-start-line="79" selection-start-column="4" selection-end-line="79" selection-end-column="63" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/student/CAgentMover.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="42" column="0" lean-forward="true" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
+        <state relative-caret-position="260">
+          <caret line="160" column="23" lean-forward="false" selection-start-line="160" selection-start-column="23" selection-end-line="160" selection-end-column="23" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#157#158#0" expanded="true" />
@@ -890,30 +845,59 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/student/CAgentMemory.java">
+    <entry file="file://$PROJECT_DIR$/src/student/FSM/CFSMStatePatrol.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="370">
-          <caret line="181" column="10" lean-forward="false" selection-start-line="181" selection-start-column="10" selection-end-line="181" selection-end-column="10" />
+        <state relative-caret-position="1197">
+          <caret line="66" column="48" lean-forward="true" selection-start-line="66" selection-start-column="48" selection-end-line="66" selection-end-column="48" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#235#236#0" expanded="true" />
-            <element signature="e#265#266#0" expanded="true" />
-            <element signature="e#3364#3365#0" expanded="true" />
-            <element signature="e#3429#3430#0" expanded="true" />
-            <element signature="method#GetCell#0;class#CAgentMemory#0" expanded="false" />
-            <element signature="e#8619#8629#0" expanded="true" />
-            <element signature="method#SetInWave#0;class#CAgentMemory#0" expanded="false" />
-            <element signature="method#OnMessage#0;class#CAgentMemory#0" expanded="false" />
-            <element signature="method#RefreshEnviroment#1;class#CAgentMemory#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/student/CMap.java">
+    <entry file="file://$PROJECT_DIR$/src/student/CAgentMemory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="38">
-          <caret line="2" column="17" lean-forward="false" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
+        <state relative-caret-position="399">
+          <caret line="21" column="5" lean-forward="true" selection-start-line="21" selection-start-column="5" selection-end-line="21" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#4871#4872#0" expanded="true" />
+            <element signature="e#4914#4915#0" expanded="true" />
+            <element signature="e#5118#5119#0" expanded="true" />
+            <element signature="e#5166#5167#0" expanded="true" />
+            <element signature="e#5204#5205#0" expanded="true" />
+            <element signature="e#5244#5245#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/student/Map/CMapCell.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="513">
+          <caret line="27" column="37" lean-forward="true" selection-start-line="27" selection-start-column="37" selection-end-line="27" selection-end-column="37" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/student/CBinaryHeap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="319">
+          <caret line="50" column="22" lean-forward="false" selection-start-line="50" selection-start-column="22" selection-end-line="50" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/student/Map/CMap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1266">
+          <caret line="27" column="5" lean-forward="true" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#549#550#0" expanded="true" />
+            <element signature="e#579#580#0" expanded="true" />
+            <element signature="e#1579#1580#0" expanded="true" />
+            <element signature="e#1644#1645#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
