@@ -20,7 +20,7 @@ public class CFSMStateStartTalkOne extends CFSMBaseState
     @Override
     public void OnEnter(CFSMBaseState inPrevState) throws Exception
     {
-        sense(false);
+        Sense(false);
     }
 
     @Override
@@ -40,13 +40,11 @@ public class CFSMStateStartTalkOne extends CFSMBaseState
     @Override
     public void Update(long inUpdateNumber) throws Exception
     {
-        if(inUpdateNumber < 3)
-            return;
-
-        for(int i = 2; i <= Memory().AgentCount(); i++)
-            _owner.sendMessage(i, new StringMessage(String.format("AgentCount:%d", Memory().AgentCount())));
-
-        _owner.SwitchState(this, EStateType.Idle);
+        if(inUpdateNumber == 3)
+        {
+            SendBroadcastMessage(new StringMessage(String.format("AgentCount:%d", Memory().AgentCount())));
+            _owner.SwitchState(this, EStateType.Patrol);
+        }
     }
 
 }

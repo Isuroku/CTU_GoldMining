@@ -17,6 +17,37 @@ public class Vector2D
         return String.format("%d:%d", x, y);
     }
 
+    public boolean equals(Vector2D o)
+    {
+        if(x != o.x)
+            return false;
+        return y == o.y;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if(this == o)
+            return true;
+        if(o == null || getClass() != o.getClass())
+            return false;
+
+        Vector2D vector2D = (Vector2D) o;
+
+        if(x != vector2D.x)
+            return false;
+        return y == vector2D.y;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = 27;
+        result = 31 * result + x;
+        result = 31 * result + y;
+        return result;
+    }
+
     public static Vector2D Parse(String str)
     {
         if(str.isEmpty())
@@ -59,6 +90,30 @@ public class Vector2D
         for(int i = 0; i < ap.length; i++)
             res.add(Vector2D.Parse(ap[i]));
 
+
         return res;
+    }
+
+    public Vector2D[] GetNeighbours(Rect2D inZone)
+    {
+        ArrayList<Vector2D> arr = new ArrayList<>();
+
+        int nx = x - 1;
+        if(inZone == null || (nx >= inZone.Left && nx <= inZone.Right))
+            arr.add(new Vector2D(nx, y));
+
+        nx = x + 1;
+        if(inZone == null || (nx >= inZone.Left && nx <= inZone.Right))
+            arr.add(new Vector2D(nx, y));
+
+        int ny = y - 1;
+        if(inZone == null || (ny >= inZone.Top && ny <= inZone.Bottom))
+            arr.add(new Vector2D(x, ny));
+
+        ny = y + 1;
+        if(inZone == null || (ny >= inZone.Top && ny <= inZone.Bottom))
+            arr.add(new Vector2D(x, ny));
+
+        return arr.toArray(new Vector2D[arr.size()]);
     }
 }

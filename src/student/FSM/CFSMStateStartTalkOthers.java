@@ -27,14 +27,15 @@ public class CFSMStateStartTalkOthers extends CFSMBaseState
         {
             String s = msg_text.substring("AgentCount".length() + 1);
             Memory().SetAgenCount(Integer.parseInt(s));
-            _owner.SwitchState(this, EStateType.Idle);
+            Sense();
+            _owner.SwitchState(this, EStateType.Patrol);
         }
     }
 
     @Override
     public void OnEnter(CFSMBaseState inPrevState) throws Exception
     {
-        sense(false);
+        Sense(false);
 
         SendMessage(1, new StringMessage("Hello"));
     }

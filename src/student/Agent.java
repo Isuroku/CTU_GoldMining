@@ -21,12 +21,14 @@ public class Agent extends AbstractAgent
     long _update_counter = 0;
 
     public CAgentMemory Memory;
+    public CAgentMover Mover;
 
     public Agent(int id, InputStream is, OutputStream os, SimulationApi api) throws Exception
     {
         super(id, is, os, api);
 
         Memory = new CAgentMemory(this);
+        Mover = new CAgentMover(this);
 
         if(id == 1)
             _states.add(new CFSMStateStartTalkOne(this));
@@ -34,6 +36,7 @@ public class Agent extends AbstractAgent
             _states.add(new CFSMStateStartTalkOthers(this));
 
         _states.add(new CFSMStateIdle(this));
+        _states.add(new CFSMStatePatrol(this));
 
         _fsm = new CFreeFSM(_states.get(0));
     }
@@ -42,9 +45,6 @@ public class Agent extends AbstractAgent
     @Override
     public void act() throws Exception
     {
-        StatusMessage sm = sense();
-        log(sm.agentX + " " + sm.agentY);
-
         while(true) {
 
             if(_update_counter == 0)
@@ -52,6 +52,7 @@ public class Agent extends AbstractAgent
 
             while (messageAvailable()) {
                 Message m = readMessage();
+                Memory.OnMessage(m);
                 _fsm.state().OnMessage(m);
             }
 
@@ -72,5 +73,13 @@ public class Agent extends AbstractAgent
                 log(String.format("change state from %s to %s", inOldState.GetStateType(), inStateType));
                 return;
             }
+
+        log(String.format("SwitchState ERROR: can't find state %s", inStateType));
+    }
+
+    public void log(Object obj, boolean print) throws Exception
+    {
+        if(print)
+            log(obj);
     }
 }

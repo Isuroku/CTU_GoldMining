@@ -85,7 +85,7 @@ public abstract class AbstractAgent extends Thread {
         } else return (StatusMessage)messenger.query(0, msg);
     }
 
-    public void log(Object obj) throws Exception {
+    protected void log(Object obj) throws Exception {
         api.println(String.format("Agent %d: %s", id, obj.toString()));
     }
 

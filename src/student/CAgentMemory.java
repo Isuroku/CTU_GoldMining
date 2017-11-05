@@ -1,7 +1,10 @@
 package student;
 
+import mas.agents.Message;
+import mas.agents.StringMessage;
 import mas.agents.task.mining.StatusMessage;
 
+import java.io.IOException;
 import java.util.*;
 
 public class CAgentMemory
@@ -14,22 +17,28 @@ public class CAgentMemory
     protected Agent _owner;
 
     private int _agent_count = 1;
+    public void SetAgenCount(int count)
+    {
+        _agent_count = count;
+        _agent_pos = new Vector2D[_agent_count];
+    }
+
+    public int AgentCount() {return _agent_count;}
 
     private Vector2D _pos = null;
+    public Vector2D Position() { return _pos; }
 
-    private int _map_width = 0;
-    private int _map_height = 0;
+    Rect2D _map_rect;
 
-    public int MapWidth() {return _map_width;}
-    public int MapHeight() {return _map_height;}
+    public Rect2D GetMapRect() { return _map_rect; }
+    public int MapWidth() { return _map_rect.Width() + 1; }
+    public int MapHeight() { return _map_rect.Height() + 1; }
 
     private Cell[] _cells;
+    private Vector2D[] _agent_pos;
 
     ArrayList<Cell> _golds;
     ArrayList<Cell> _depots;
-
-    public void SetAgenCount(int count) { _agent_count = count; }
-    public int AgentCount() {return _agent_count;}
 
     public void InitCoord(StatusMessage sm) throws Exception
     {
@@ -38,14 +47,13 @@ public class CAgentMemory
 
         _pos = new Vector2D(sm.agentX, sm.agentY);
 
-        _map_width = sm.width;
-        _map_height = sm.height;
+        _map_rect = new Rect2D(0, sm.width - 1, 0, sm.height - 1);
 
-        _cells = new Cell[_map_width * _map_height];
+        _cells = new Cell[MapWidth() * MapHeight()];
         for(int i = 0; i < _cells.length; ++i)
             _cells[i] = new Cell( IndexToCoord(i) );
 
-        _owner.log(PatrolZone());
+        //_owner.log(PatrolZone());
 
         /*if(_pos.x == 0 && _pos.y == 0)
         {
@@ -53,29 +61,41 @@ public class CAgentMemory
         }*/
     }
 
-    protected Rect2D PatrolZone()
+    public Rect2D PatrolZone()
     {
-        int w = _map_width / _agent_count + 1;
-        int l = w * (_owner.getAgentId() - 1);
+        int w = MapWidth() / _agent_count - 1;
+        int w2 = w + 1;
+
+        int l = w2 * (_owner.getAgentId() - 1);
+
         int r = l + w;
-        if(r >= _map_width)
-            r = _map_width - 1;
-        return new Rect2D(l, r, 0, _map_height - 1);
+
+        int miss = MapWidth() - _agent_count * w2;
+
+        if(_owner.getAgentId() == _agent_count)
+            r += miss;
+
+        /*if(r >= _map_width)
+            r = _map_width - 1;*/
+        return new Rect2D(l, r, 0, MapHeight() - 1);
     }
 
-    public void RefreshEnviroment(StatusMessage sm, ArrayList<Vector2D> outNewObstacles, ArrayList<Vector2D> outNewGold, ArrayList<Vector2D> outNewDepots) throws Exception
+    private void RefreshEnviroment(StatusMessage sm, ArrayList<Vector2D> outNewObstacles, ArrayList<Vector2D> outNewGold, ArrayList<Vector2D> outNewDepots) throws Exception
     {
         if(_pos == null)
             InitCoord(sm);
 
         _pos.x = sm.agentX;
         _pos.y = sm.agentY;
+
+        SetOtherAgentPos(_owner.getAgentId(), _pos);
+
         sm.sensorInput.forEach(data ->
         {
             Cell c = _cells[CoordToIndex(data.x, data.y)];
-            if(data.type == StatusMessage.OBSTACLE && c.Passable)
+            if(data.type == StatusMessage.OBSTACLE && c.IsObstacleFree())
             {
-                c.Passable = false;
+                c.SetObstacle();
                 outNewObstacles.add(c.Pos);
             }
             if(data.type == StatusMessage.GOLD && !c.Gold)
@@ -93,26 +113,26 @@ public class CAgentMemory
         });
     }
 
-    private int CoordToIndex(int x, int y) { return y  * _map_width + x; }
-    private int CoordToIndex(Vector2D pos) { return pos.y  * _map_width + pos.x; }
+    private int CoordToIndex(int x, int y) { return y  * MapWidth() + x; }
+    private int CoordToIndex(Vector2D pos) { return pos.y  * MapWidth() + pos.x; }
 
     private Vector2D IndexToCoord(int index)
     {
-        int y = index / _map_width;
-        int x = index - y * _map_width;
+        int y = index / MapWidth();
+        int x = index - y * MapWidth();
         return new Vector2D(x, y);
     }
 
     public void SetNewObstacles(ArrayList<Vector2D> coord_list)
     {
-        coord_list.forEach(v -> _cells[CoordToIndex(v)].Passable = false);
+        coord_list.forEach(v -> GetCell(v).SetObstacle());
     }
 
     public void SetNewGold(ArrayList<Vector2D> coord_list)
     {
         coord_list.forEach(v ->
         {
-            Cell c = _cells[CoordToIndex(v)];
+            Cell c = GetCell(v);
             if(!c.Gold)
             {
                 c.Gold = true;
@@ -125,7 +145,7 @@ public class CAgentMemory
     {
         coord_list.forEach(v ->
         {
-            Cell c = _cells[CoordToIndex(v)];
+            Cell c = GetCell(v);
             if(!c.Depot)
             {
                 c.Depot = true;
@@ -134,11 +154,57 @@ public class CAgentMemory
         });
     }
 
+    public boolean IsPassableCell(Vector2D inCoord, boolean inAgentObstacle)
+    {
+        Cell c = GetCell(inCoord);
+        return c.IsPassable(inAgentObstacle);
+    }
+
+    public int GetPassably(Vector2D inCoord)
+    {
+        Cell c = GetCell(inCoord);
+        return c.GetPassably();
+    }
+
+    public void SetOtherAgentPos(int inAgentId, Vector2D inPos) throws Exception
+    {
+        _owner.log(String.format("SetOtherAgentPos: Agent %d in pos %s", inAgentId, inPos), true);
+        if(_agent_pos[inAgentId - 1] != null)
+        {
+            Cell c = GetCell(_agent_pos[inAgentId - 1]);
+            c.AgentId = 0;
+        }
+        _agent_pos[inAgentId - 1] = inPos;
+        Cell c = GetCell(inPos);
+        c.AgentId = inAgentId;
+    }
+
     class Cell implements Comparable<Cell>
     {
         public Vector2D Pos;
 
-        public boolean Passable = true;
+        public boolean IsPassable(boolean agent_obstacle)
+        {
+            if(agent_obstacle)
+                return _passable && AgentId == 0;
+            return _passable;
+        }
+
+        int GetPassably()
+        {
+            if(AgentId != 0)
+                return AgentId;
+            if(!_passable)
+                return 0;
+            return -1;
+        }
+
+        public boolean IsObstacleFree() { return _passable ; }
+        public void SetObstacle() { _passable = false; }
+
+        private boolean _passable = true;
+
+        public int AgentId = 0;
 
         public boolean Gold = false;
         public boolean Depot = false;
@@ -151,7 +217,13 @@ public class CAgentMemory
 
         @Override
         public String toString() {
-            return String.format("%s:%s [wl:%d, wn: %d, p: %s]", Pos, Passable ? " passable" : "", WaveLength, WaveNumber, Prev == null ? "none" : Prev.Pos);
+            return String.format("%s: %s%s%s agent %d [wl:%d, wn: %d, p: %s]",
+                    Pos,
+                    _passable ? " passable" : "",
+                    Gold ? " gold" : "",
+                    Depot ? " depot" : "",
+                    AgentId,
+                    WaveLength, WaveNumber, Prev == null ? "none" : Prev.Pos);
         }
 
         @Override
@@ -161,11 +233,64 @@ public class CAgentMemory
         }
     }
 
-    long _wave_number = Long.MIN_VALUE;
+    private Cell GetCell(Vector2D inCoord)
+    {
+        int index = CoordToIndex(inCoord);
+
+        if(index < 0 || index >= _cells.length)
+            throw new RuntimeException( String.format("Incorrect coord %s!", inCoord));
+
+        return _cells[index];
+    }
+
+    int[] ClosestAgent(Vector2D target)
+    {
+        Cell s_cell = GetCell(target);
+
+        _wave_number++;
+
+        s_cell.Prev = null;
+        s_cell.WaveLength = 0;
+        s_cell.WaveNumber = _wave_number;
+
+        CBinaryHeap set = new CBinaryHeap();
+        set.Insert(s_cell);
+
+        int need_count = 2;
+        int[] agents = new int[need_count];
+
+        int agent_count = 0;
+        while(!set.IsEmpty() && agent_count < need_count)
+        {
+            Cell cell = (Cell)set.FindMin();
+            set.DeleteMin();
+
+            if(cell.AgentId > 0)
+            {
+                agents[agent_count] = cell.AgentId;
+                agent_count++;
+            }
+
+            if(agent_count < need_count)
+            {
+                Vector2D[] neighbours = cell.Pos.GetNeighbours(_map_rect);
+                for(int i = 0; i < neighbours.length; ++i)
+                {
+                    Vector2D p = neighbours[i];
+                    Cell n = GetCell(p);
+                    SetInWave(cell, n, set);
+                }
+            }
+        }
+
+        return agents;
+    }
+
+    private long _wave_number = Long.MIN_VALUE;
     public Vector2D[] GetPath(Vector2D target)
     {
-        Cell f_cell = _cells[CoordToIndex(target)];
-        Cell s_cell = _cells[CoordToIndex(_pos)];
+        Cell f_cell = GetCell(target);
+        Cell s_cell = GetCell(_pos);
 
         if(f_cell == s_cell)
             return new Vector2D[] { _pos };
@@ -189,58 +314,35 @@ public class CAgentMemory
 
             if(!found)
             {
-                Vector2D p = new Vector2D(cell.Pos);
-
-                p.y--;
-                if(p.y >= 0)
+                Vector2D[] neighbours = cell.Pos.GetNeighbours(_map_rect);
+                for(int i = 0; i < neighbours.length; ++i)
                 {
-                    Cell n = _cells[CoordToIndex(p)];
-                    SetInWave(cell, n, set);
-                }
-
-                p.y += 2;
-                if(p.y < _map_height)
-                {
-                    Cell n = _cells[CoordToIndex(p)];
-                    SetInWave(cell, n, set);
-                }
-
-                p.y--;
-                p.x--;
-                if(p.x >= 0)
-                {
-                    Cell n = _cells[CoordToIndex(p)];
-                    SetInWave(cell, n, set);
-                }
-
-                p.x += 2;
-                if(p.x < _map_width)
-                {
-                    Cell n = _cells[CoordToIndex(p)];
+                    Vector2D p = neighbours[i];
+                    Cell n = GetCell(p);
                     SetInWave(cell, n, set);
                 }
             }
         }
 
         if(!found)
-            return new Vector2D[0];
+            return null;
 
         ArrayList<Vector2D> lst = new ArrayList<Vector2D>();
 
         Cell c = f_cell;
-        while(c != null)
+        while(c != null && c.Prev != null)
         {
             lst.add(new Vector2D(c.Pos));
             c = c.Prev;
         }
 
         Collections.reverse(lst);
-        return (Vector2D[]) lst.toArray();
+        return lst.toArray(new Vector2D[lst.size()]);
     }
 
     private void SetInWave(Cell prev, Cell next, CBinaryHeap set)
     {
-        if(!next.Passable || prev.WaveNumber == next.WaveNumber)
+        if(!next.IsPassable(false) || prev.WaveNumber == next.WaveNumber)
             return;
 
         next.WaveNumber = prev.WaveNumber;
@@ -249,4 +351,90 @@ public class CAgentMemory
         set.Insert(next);
     }
 
+    public void OnMessage(Message inMessage) throws Exception
+    {
+        String msg_text = inMessage.stringify();
+
+        String log_s =  String.format("have received %s from Agent %d" , msg_text, inMessage.getSender());
+        _owner.log(log_s, false);
+
+        if(msg_text.startsWith("REnv:"))
+        {
+            String s = msg_text.substring("REnv:".length());
+
+            String[] arr = s.split(";");
+
+            for(int i = 0; i < arr.length; i++)
+            {
+                String part = arr[i];
+                String data_type = part.substring(0, 2);
+                String data = part.substring(3, part.length() - 1);
+
+                if(data_type.compareToIgnoreCase("ps") == 0)
+                {
+                    Vector2D pos = Vector2D.Parse(data);
+                    SetOtherAgentPos(inMessage.getSender(), pos);
+                }
+                else
+                {
+                    ArrayList<Vector2D> coord_list = Vector2D.StringToList(data);
+
+                    if(data_type.compareToIgnoreCase("no") == 0)
+                        SetNewObstacles(coord_list);
+                    else if(data_type.compareToIgnoreCase("ng") == 0)
+                        SetNewGold(coord_list);
+                    else if(data_type.compareToIgnoreCase("nd") == 0)
+                        SetNewDepot(coord_list);
+                }
+            }
+        }
+    }
+
+    public void RefreshEnviroment(StatusMessage sm) throws Exception
+    {
+        Vector2D old_pos = _pos == null ? new Vector2D(-1, -1) : new Vector2D(_pos);
+        ArrayList<Vector2D> new_obstacles = new ArrayList<>();
+        ArrayList<Vector2D> new_golds = new ArrayList<>();
+        ArrayList<Vector2D> new_depots = new ArrayList<>();
+        RefreshEnviroment(sm, new_obstacles, new_golds, new_depots);
+
+        if(old_pos.equals(_pos) && new_obstacles.isEmpty() && new_golds.isEmpty() && new_depots.isEmpty())
+            return;
+
+        StringBuilder sb = new StringBuilder();
+
+        //все ключи в 2 символа
+        {
+            String s = _pos.toString();
+            sb.append("ps[").append(s).append("];");
+        }
+
+        if(!new_obstacles.isEmpty())
+        {
+            String s = new_obstacles.toString();
+            sb.append("no").append(s).append(";");
+        }
+        if(!new_golds.isEmpty())
+        {
+            String s = new_golds.toString();
+            sb.append("ng").append(s).append(";");
+        }
+        if(!new_depots.isEmpty())
+        {
+            String s = new_depots.toString();
+            sb.append("nd").append(s).append(";");
+        }
+
+        SendBroadcastMessage(new StringMessage(String.format("REnv:%s", sb)));
+    }
+
+    void SendBroadcastMessage(Message m) throws Exception
+    {
+        String log_s =  String.format("SendBroadcastMessage %s", m.stringify());
+        _owner.log(log_s, true);
+
+        for(int i = 1; i <= AgentCount(); i++)
+            if(i != _owner.getAgentId())
+                _owner.sendMessage(i, m);
+    }
 }

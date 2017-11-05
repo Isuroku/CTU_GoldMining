@@ -3,10 +3,7 @@ package student.FSM;
 import mas.agents.Message;
 import mas.agents.StringMessage;
 import mas.agents.task.mining.StatusMessage;
-import student.Agent;
-import student.CAgentMemory;
-import student.Rect2D;
-import student.Vector2D;
+import student.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,35 +16,18 @@ public abstract class CFSMBaseState
     public abstract void Update(long inUpdateNumber) throws Exception;
 
     CAgentMemory Memory() { return _owner.Memory; }
+    CAgentMover Mover() { return _owner.Mover; }
 
     public void OnMessage(Message inMessage) throws Exception
     {
         String msg_text = inMessage.stringify();
 
-        String log_s =  String.format("have received %s from Agent %d" , msg_text, inMessage.getSender());
-        _owner.log(log_s);
-
-        if(msg_text.startsWith("REnv:"))
+        if(msg_text.compareToIgnoreCase("letpass") == 0)
         {
-            String s = msg_text.substring("REnv:".length());
+            String log_s =  String.format("have received %s from Agent %d" , msg_text, inMessage.getSender());
+            _owner.log(log_s, true);
 
-            String[] arr = s.split(";");
-
-            for(int i = 0; i < arr.length; i++)
-            {
-                String part = arr[i];
-                String data_type = part.substring(0, 2);
-                String data = part.substring(3, part.length() - 1);
-
-                ArrayList<Vector2D> coord_list = Vector2D.StringToList(data);
-
-                if(data_type.compareToIgnoreCase("no") == 0)
-                    Memory().SetNewObstacles(coord_list);
-                else if(data_type.compareToIgnoreCase("ng") == 0)
-                    Memory().SetNewGold(coord_list);
-                else if(data_type .compareToIgnoreCase("nd") == 0)
-                    Memory().SetNewDepot(coord_list);
-            }
+            Mover().LetPass();
         }
     }
 
@@ -58,100 +38,41 @@ public abstract class CFSMBaseState
 
     void SendBroadcastMessage(Message m) throws IOException
     {
-        for(int i = 0; i < Memory().AgentCount(); i++)
+        for(int i = 1; i <= Memory().AgentCount(); i++)
             if(i != _owner.getAgentId())
                 _owner.sendMessage(i, m);
     }
 
-    public StatusMessage left() throws Exception
-    {
-        StatusMessage sm = _owner.left();
-        RefreshEnviroment(sm);
-        return sm;
-    }
-
-    public StatusMessage right() throws Exception
-    {
-        StatusMessage sm = _owner.right();
-        RefreshEnviroment(sm);
-        return sm;
-    }
-
-    public StatusMessage up() throws Exception
-    {
-        StatusMessage sm = _owner.up();
-        RefreshEnviroment(sm);
-        return sm;
-    }
-
-    public StatusMessage down() throws Exception
-    {
-        StatusMessage sm = _owner.down();
-        RefreshEnviroment(sm);
-        return sm;
-    }
-
-    public StatusMessage pick() throws Exception
+    public StatusMessage Pick() throws Exception
     {
         StatusMessage sm = _owner.pick();
-        RefreshEnviroment(sm);
+        Memory().RefreshEnviroment(sm);
         return sm;
     }
 
-    public StatusMessage drop() throws Exception
+    public StatusMessage Drop() throws Exception
     {
         StatusMessage sm = _owner.drop();
-        RefreshEnviroment(sm);
+        Memory().RefreshEnviroment(sm);
         return sm;
     }
 
-    public StatusMessage sense() throws Exception
+    public StatusMessage Sense() throws Exception
     {
-        return sense(true);
+        return Sense(true);
     }
 
-    public StatusMessage sense(boolean send) throws Exception
+    public StatusMessage Sense(boolean send) throws Exception
     {
         StatusMessage sm = _owner.sense();
         if(send)
-            RefreshEnviroment(sm);
+            Memory().RefreshEnviroment(sm);
         return sm;
     }
 
     CFSMBaseState(Agent owner)
     {
         _owner = owner;
-    }
-
-    protected void RefreshEnviroment(StatusMessage sm) throws Exception
-    {
-        ArrayList<Vector2D> new_obstacles = new ArrayList<>();
-        ArrayList<Vector2D> new_golds = new ArrayList<>();
-        ArrayList<Vector2D> new_depots = new ArrayList<>();
-        Memory().RefreshEnviroment(sm, new_obstacles, new_golds, new_depots);
-
-        if(new_obstacles.isEmpty() && new_golds.isEmpty() && new_depots.isEmpty())
-            return;
-
-        StringBuilder sb = new StringBuilder();
-
-        if(!new_obstacles.isEmpty())
-        {
-            String s = new_obstacles.toString();
-            sb.append("no").append(s).append(";");
-        }
-        if(!new_golds.isEmpty())
-        {
-            String s = new_golds.toString();
-            sb.append("ng").append(s).append(";");
-        }
-        if(!new_depots.isEmpty())
-        {
-            String s = new_depots.toString();
-            sb.append("nd").append(s).append(";");
-        }
-
-        SendBroadcastMessage(new StringMessage(String.format("REnv:%s", sb)));
     }
 
     protected Agent _owner;
