@@ -9,7 +9,7 @@ import student.Vector2D;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+
 
 public class CMap
 {
@@ -67,12 +67,18 @@ public class CMap
 
     public void SetNewObstacles(Iterable<Vector2D> coord_list)
     {
-        coord_list.forEach(v -> GetCell(v).SetObstacle());
+        //coord_list.forEach(v -> GetCell(v).SetObstacle());
+
+        for (Vector2D v : coord_list)
+        {
+            GetCell(v).SetObstacle();
+        }
     }
+
 
     public void SetNewGold(Iterable<Vector2D> coord_list)
     {
-        coord_list.forEach(v ->
+        /*coord_list.forEach(v ->
         {
             CMapCell c = GetCell(v);
             if(!c.Gold)
@@ -80,12 +86,22 @@ public class CMap
                 c.Gold = true;
                 _golds.add(c);
             }
-        });
+        });*/
+
+        for (Vector2D v : coord_list)
+        {
+            CMapCell c = GetCell(v);
+            if(!c.Gold)
+            {
+                c.Gold = true;
+                _golds.add(c);
+            }
+        }
     }
 
     public void SetNewDepot(Iterable<Vector2D> coord_list)
     {
-        coord_list.forEach(v ->
+        /*coord_list.forEach(v ->
         {
             CMapCell c = GetCell(v);
             if(!c.Depot)
@@ -93,7 +109,17 @@ public class CMap
                 c.Depot = true;
                 _depots.add(c);
             }
-        });
+        });*/
+
+        for (Vector2D v : coord_list)
+        {
+            CMapCell c = GetCell(v);
+            if(!c.Depot)
+            {
+                c.Depot = true;
+                _depots.add(c);
+            }
+        }
     }
 
     public boolean IsPassableCell(Vector2D inCoord, boolean inAgentObstacle)
@@ -138,7 +164,8 @@ public class CMap
                                    ArrayList<Vector2D> outNewDepots,
                                    ArrayList<Vector2D> outAgents) throws Exception
     {
-        sm.sensorInput.forEach(data ->
+
+        for (StatusMessage.SensorData data : sm.sensorInput)
         {
             CMapCell c = _cells[CoordToIndex(data.x, data.y)];
             if(data.type == StatusMessage.OBSTACLE && c.IsObstacleFree())
@@ -160,7 +187,8 @@ public class CMap
             }
             if(data.type == StatusMessage.AGENT)
                 outAgents.add(c.Pos);
-        });
+        }
+
     }
 
     private CMapCell GetCell(Vector2D inCoord)
@@ -328,11 +356,15 @@ public class CMap
     public ArrayList<Vector2D> GetNeighbourhoodPoses(Vector2D pos, int inDist, boolean inAgentObstacle)
     {
         ArrayList<Vector2D> neighbours = pos.GetNeighbourhoodPoses(_map_rect, inDist);
-        neighbours.removeIf(p ->
+
+        for(int i = neighbours.size() - 1; i >= 0; i--)
         {
+            Vector2D p = neighbours.get(i);
             CMapCell n = GetCell(p);
-            return !n.IsPassable(inAgentObstacle);
-        });
+            if(!n.IsPassable(inAgentObstacle))
+                neighbours.remove(i);
+        }
+
 
         return neighbours;
     }
