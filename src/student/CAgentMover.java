@@ -1,6 +1,7 @@
 package student;
 
 import mas.agents.task.mining.StatusMessage;
+import student.FSM.EStateType;
 import student.Messages.CMessageLetPass;
 
 public class CAgentMover
@@ -73,7 +74,9 @@ public class CAgentMover
 
         if(agent_id > 0)
         {
-            if(agent_id > _owner.getAgentId())
+            int pO = GetPrioritize(agent_id);
+            int pT = GetPrioritize(_owner.getAgentId());
+            if(pO > pT)
             {
                 Vector2D free_pos = GetFreePosition();
                 if(free_pos != null)
@@ -95,6 +98,18 @@ public class CAgentMover
         }
 
          return MakeStep(step_pos);
+    }
+
+    int GetPrioritize(int inAgentId)
+    {
+        EStateType state = Memory().GetAgentState(inAgentId);
+        int p = inAgentId;
+        switch(state)
+        {
+            case TakeGold: p *= 10; break;
+            case GoldToDepot: p *= 100; break;
+        }
+        return p;
     }
 
     Tuple<EStepResult, Integer> MakeStep(Vector2D pos) throws Exception

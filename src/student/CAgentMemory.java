@@ -52,9 +52,18 @@ public class CAgentMemory
 
         Rect2D pz = PatrolZone();
 
-        for(int x = pz.Left; x <= pz.Right; ++x)
-            for(int y = pz.Top; y <= pz.Bottom; ++y)
-                _dark_poses_small.add(new Vector2D(x, y));
+        if(_owner.getAgentId() <= _agent_count / 2)
+        {
+            for(int x = pz.Left; x <= pz.Right; ++x)
+                for(int y = pz.Top; y <= pz.Bottom; ++y)
+                    _dark_poses_small.add(new Vector2D(x, y));
+        }
+        else
+        {
+            for(int x = pz.Right; x >= pz.Left; --x)
+                for(int y = pz.Top; y <= pz.Bottom; ++y)
+                    _dark_poses_small.add(new Vector2D(x, y));
+        }
     }
 
     public int AgentCount() {return _agent_count;}

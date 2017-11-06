@@ -75,9 +75,9 @@ public class Agent extends AbstractAgent
 
             _fsm.state().Update(_update_counter);
 
-            /*try {
-                Thread.sleep(200);
-            } catch(InterruptedException ie) {}*/
+            try {
+                Thread.sleep(40);
+            } catch(InterruptedException ie) {}
         }
     }
 
