@@ -6,5 +6,5 @@ public enum EMessageType
     LetPass,
     REnv,
     ChangeState,
-    TakeGold, GoldPicked, AgentCount
+    TakeGold, GoldPicked, PickUp, AgentCount
 }

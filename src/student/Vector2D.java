@@ -1,6 +1,7 @@
 package student;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class Vector2D
@@ -114,19 +115,20 @@ public class Vector2D
         if(inZone == null || (ny >= inZone.Top && ny <= inZone.Bottom))
             arr.add(new Vector2D(x, ny));
 
+        Collections.shuffle(arr);
         return arr.toArray(new Vector2D[arr.size()]);
     }
 
-    public Vector2D[] GetNeighbourhoodPoses(Rect2D inZone)
+    public ArrayList<Vector2D> GetNeighbourhoodPoses(Rect2D inZone, int inDist)
     {
         ArrayList<Vector2D> arr = new ArrayList<>();
 
-        for(int nx = x - 1; nx <= x + 1; nx++)
-            for(int ny = y - 1; ny <= y + 1; ny++)
+        for(int nx = x - inDist; nx <= x + inDist; nx++)
+            for(int ny = y - inDist; ny <= y + inDist; ny++)
                 if(inZone == null || (nx >= inZone.Left && nx <= inZone.Right && ny >= inZone.Top && ny <= inZone.Bottom))
                     arr.add(new Vector2D(nx, ny));
 
-        return arr.toArray(new Vector2D[arr.size()]);
+        return arr;
     }
 
     public boolean IsNeighbour(Vector2D pos)

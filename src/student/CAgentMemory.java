@@ -42,6 +42,12 @@ public class CAgentMemory
         _agents_info = new CAgentInfo[count];
         for(int i = 0; i < count; ++i)
             _agents_info[i] = new CAgentInfo();
+
+        Rect2D pz = PatrolZone();
+
+        for(int x = pz.Left; x <= pz.Right; ++x)
+            for(int y = pz.Top; y <= pz.Bottom; ++y)
+                _dark_poses.add(new Vector2D(x, y));
     }
 
     public int AgentCount() {return _agent_count;}
@@ -53,18 +59,11 @@ public class CAgentMemory
         _pos = new Vector2D(sm.agentX, sm.agentY);
 
         _map.InitCoord(sm.width, sm.height);
-
-        Rect2D pz = PatrolZone();
-
-        for(int x = pz.Left; x <= pz.Right; ++x)
-            for(int y = pz.Top; y <= pz.Bottom; ++y)
-                _dark_poses.add(new Vector2D(x, y));
-
     }
 
     void DeleteDarkPos(Vector2D pos)
     {
-        Vector2D[] poses = pos.GetNeighbourhoodPoses(_map.GetMapRect());
+        ArrayList<Vector2D> poses = pos.GetNeighbourhoodPoses(_map.GetMapRect(), 1);
         for(Vector2D p : poses)
             _dark_poses.remove(p);
     }
@@ -105,8 +104,13 @@ public class CAgentMemory
         else if(inMessage.MessageType() == EMessageType.GoldPicked)
         {
             CMessageGoldPicked msg = (CMessageGoldPicked) inMessage;
-            _map.DeleteGold(msg.GoldPos());
+            DeleteGold(msg.GoldPos());
         }
+    }
+
+    public void DeleteGold(Vector2D pos)
+    {
+        _map.DeleteGold(pos);
     }
 
     public void RefreshEnvironment(StatusMessage sm) throws Exception
@@ -114,19 +118,20 @@ public class CAgentMemory
         RefreshEnvironment(sm, true);
     }
 
+    Vector2D _sent_pos = new Vector2D(-1, -1);
+
     public void RefreshEnvironment(StatusMessage sm, boolean send) throws Exception
     {
-        Vector2D old_pos = _pos == null ? new Vector2D(-1, -1) : new Vector2D(_pos);
-
         ArrayList<Vector2D> new_obstacles = new ArrayList<>();
         ArrayList<Vector2D> new_golds = new ArrayList<>();
         ArrayList<Vector2D> new_depots = new ArrayList<>();
 
         RefreshEnvironment(sm, new_obstacles, new_golds, new_depots);
 
-        if(old_pos.equals(_pos) && new_obstacles.isEmpty() && new_golds.isEmpty() && new_depots.isEmpty() || !send)
+        if(_sent_pos.equals(_pos) && new_obstacles.isEmpty() && new_golds.isEmpty() && new_depots.isEmpty() || !send)
             return;
 
+        _sent_pos = new Vector2D(_pos);
         CMessageRefreshEnvironment msg = new CMessageRefreshEnvironment(_owner.getAgentId(), _pos, new_obstacles, new_golds, new_depots);
         _owner.SendBroadcastMessage(msg);
     }
@@ -205,7 +210,7 @@ public class CAgentMemory
         _owner.log(format, b);
     }
 
-    public boolean IsOtherAgentOnCell(Vector2D pos)
+    public int IsOtherAgentOnCell(Vector2D pos)
     {
         return _map.IsOtherAgentOnCell(pos);
     }
@@ -227,5 +232,15 @@ public class CAgentMemory
 
         Vector2D pos = _dark_poses.iterator().next();
         return pos;
+    }
+
+    public Vector2D GetAgentPos(int inAgentId)
+    {
+        return _map.GetAgentPos(inAgentId);
+    }
+
+    public ArrayList<Vector2D> GetNeighbourhoodPoses(int inDist, boolean inAgentObstacle)
+    {
+        return _map.GetNeighbourhoodPoses(_pos, inDist, inAgentObstacle);
     }
 }

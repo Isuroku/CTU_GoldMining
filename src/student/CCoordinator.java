@@ -65,15 +65,18 @@ public class CCoordinator
                 continue;
             }
 
+            int a1 = agents[0];
+            int a2 = agents[1];
+
             for(Integer agent_id : agents)
             {
                 if(agent_id == _owner.getAgentId())
                 {
                     CFSMStateTakeGold state = (CFSMStateTakeGold) _owner.SwitchState(EStateType.TakeGold);
-                    state.SetGold(gold_pos);
+                    state.SetGold(gold_pos, a1, a2);
                 } else
                 {
-                    CMessageTakeGold msg = new CMessageTakeGold(_owner.getAgentId(), gold_pos);
+                    CMessageTakeGold msg = new CMessageTakeGold(_owner.getAgentId(), gold_pos, a1, a2);
                     _owner.SendMessage(agent_id, msg);
                     Memory().SetAgentState(agent_id, EStateType.TakeGold);
                 }

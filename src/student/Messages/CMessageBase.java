@@ -46,6 +46,7 @@ public abstract class CMessageBase
             case ChangeState: msg = new CMessageChangeState(SenderId); break;
             case TakeGold: msg = new CMessageTakeGold(SenderId); break;
             case GoldPicked: msg = new CMessageGoldPicked(SenderId); break;
+            case PickUp: msg = new CMessagePickUp(SenderId); break;
         }
 
         if(msg != null && msg.Init(inMsgBody))

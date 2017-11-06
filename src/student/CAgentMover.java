@@ -14,6 +14,7 @@ public class CAgentMover
 
     Vector2D[] _path;
     int _index;
+    int _agent_lower = 0;
 
     CAgentMemory Memory() { return _owner.Memory; }
 
@@ -39,14 +40,15 @@ public class CAgentMover
     {
         _path = null;
         _index = 0;
+        _agent_lower = 0;
     }
 
-    public EStepResult Step() throws Exception
+    public Tuple<EStepResult, Integer> Step() throws Exception
     {
         if(_path == null || _index >= _path.length)
         {
             ResetPath();
-            return EStepResult.NoPath;
+            return new Tuple<>(EStepResult.NoPath, 0);
         }
 
         for(int i = _index; i < _path.length; i++)
@@ -54,7 +56,7 @@ public class CAgentMover
             if(!Memory().IsPassableCell(_path[i], false))
             {
                 ResetPath();
-                return EStepResult.NoPath;
+                return new Tuple<>(EStepResult.NoPath, 0);
             }
         }
 
@@ -66,7 +68,7 @@ public class CAgentMover
         if(agent_id == 0)
         {
             ResetPath();
-            return EStepResult.Obstacle;
+            return new Tuple<>(EStepResult.Obstacle, 0);
         }
 
         if(agent_id > 0)
@@ -83,14 +85,19 @@ public class CAgentMover
                     _owner.SendMessage(agent_id, new CMessageLetPass(_owner.getAgentId()));
             }
             else
-                return EStepResult.AgentLower;
+            {
+                _agent_lower++;
+                if(_agent_lower > 7)
+                    _owner.SendMessage(agent_id, new CMessageLetPass(_owner.getAgentId()));
+                return new Tuple<>(EStepResult.AgentLower, agent_id);
+            }
            //return EStepResult.AgentHigher;
         }
 
          return MakeStep(step_pos);
     }
 
-    EStepResult MakeStep(Vector2D pos) throws Exception
+    Tuple<EStepResult, Integer> MakeStep(Vector2D pos) throws Exception
     {
         Vector2D our_pos = _owner.Memory.Position();
         int dx = pos.x - our_pos.x;
@@ -99,7 +106,7 @@ public class CAgentMover
         if(dx == 0 && dy == 0 || dx != 0 && dy != 0)
         {
             _owner.log( String.format("Error Step: dx %d, dy %d", dx, dy), false);
-            return EStepResult.ErrorCalcNextPos;
+            return new Tuple<>(EStepResult.ErrorCalcNextPos, 0);
         }
 
         EStepResult res = EStepResult.ErrorStep;
@@ -122,7 +129,7 @@ public class CAgentMover
         else if(!Memory().Position().IsNeighbour(pos))
             _owner.log(String.format("Step: can't do step into %s", pos), true);
 
-        return res;
+        return new Tuple<>(res, 0);
     }
 
     public StatusMessage Left() throws Exception
@@ -177,8 +184,8 @@ public class CAgentMover
             return;
         }
 
-        EStepResult res = MakeStep(free_pos);
-        if(res != EStepResult.StepDone)
+        Tuple<EStepResult, Integer> res = MakeStep(free_pos);
+        if(res.Item1 != EStepResult.StepDone)
             _owner.log("Error - LetPass: can't let pass!", true);
         else
             ResetPath();

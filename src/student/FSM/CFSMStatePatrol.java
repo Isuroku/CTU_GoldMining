@@ -1,12 +1,9 @@
 package student.FSM;
 
-import student.Agent;
-import student.EStepResult;
+import student.*;
 import student.Messages.CMessageBase;
 import student.Messages.CMessageTakeGold;
 import student.Messages.EMessageType;
-import student.Rect2D;
-import student.Vector2D;
 
 public class CFSMStatePatrol extends CFSMBaseState
 {
@@ -25,7 +22,8 @@ public class CFSMStatePatrol extends CFSMBaseState
         if(inMessage.MessageType() == EMessageType.TakeGold)
         {
             CFSMStateTakeGold state = (CFSMStateTakeGold) _owner.SwitchState(EStateType.TakeGold);
-            state.SetGold(((CMessageTakeGold)inMessage).GoldPos());
+            CMessageTakeGold msg = (CMessageTakeGold)inMessage;
+            state.SetGold(msg.GoldPos(), msg.Agent1(), msg.Agent2());
         }
     }
 
@@ -45,8 +43,8 @@ public class CFSMStatePatrol extends CFSMBaseState
     @Override
     public void Update(long inUpdateNumber) throws Exception
     {
-        EStepResult step_res = Mover().Step();
-        if(step_res == EStepResult.NoPath || step_res == EStepResult.Obstacle)
+        Tuple<EStepResult, Integer> step_res = Mover().Step();
+        if(step_res.Item1 == EStepResult.NoPath || step_res.Item1 == EStepResult.Obstacle)
             ChangeTarget();
     }
 

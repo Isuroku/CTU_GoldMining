@@ -108,6 +108,14 @@ public class CMap
         return c.GetPassably();
     }
 
+    public Vector2D GetAgentPos(int inAgentId)
+    {
+        CMapCell cell = _agent_pos[inAgentId - 1];
+        if(cell == null)
+            return null;
+        return cell.Pos;
+    }
+
     public void SetOtherAgentPos(int inAgentId, Vector2D inPos) throws Exception
     {
         if(_agent_pos == null)
@@ -311,10 +319,22 @@ public class CMap
         }
     }
 
-    public boolean IsOtherAgentOnCell(Vector2D pos)
+    public int IsOtherAgentOnCell(Vector2D pos)
     {
         CMapCell cell = GetCell(pos);
-        return cell.AgentId > 0;
+        return cell.AgentId;
+    }
+
+    public ArrayList<Vector2D> GetNeighbourhoodPoses(Vector2D pos, int inDist, boolean inAgentObstacle)
+    {
+        ArrayList<Vector2D> neighbours = pos.GetNeighbourhoodPoses(_map_rect, inDist);
+        neighbours.removeIf(p ->
+        {
+            CMapCell n = GetCell(p);
+            return !n.IsPassable(inAgentObstacle);
+        });
+
+        return neighbours;
     }
 
     public Vector2D GetFreeNeighbourCell(Vector2D pos)

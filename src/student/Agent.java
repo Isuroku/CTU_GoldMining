@@ -89,7 +89,7 @@ public class Agent extends AbstractAgent
             {
                 EStateType old_state = _fsm.state().GetStateType();
                 _fsm.Switch(_states.get(i));
-                log(String.format("change state from %s to %s", old_state, inStateType));
+                log(String.format("change state from %s to %s", old_state, inStateType), true);
 
                 Memory.SetAgentState(getAgentId(), _fsm.state().GetStateType());
                 SendBroadcastMessage(new CMessageChangeState(getAgentId(), _fsm.state().GetStateType()));
@@ -103,15 +103,16 @@ public class Agent extends AbstractAgent
 
     public void log(Object obj, boolean print) throws Exception
     {
-        if(print)
-            log(obj);
+        //if(print)
+          //  log(obj);
     }
 
     void LogMessage(int Recipient, CMessageBase msg) throws Exception
     {
-        if(msg.MessageType() == EMessageType.TakeGold ||
-                msg.MessageType() == EMessageType.GoldPicked)
-            log(String.format("%s%s", Recipient == 0 ? "Receive: " : "Send to " + Recipient + ": ", msg.toString()));
+        /*if(msg.MessageType() == EMessageType.TakeGold ||
+                msg.MessageType() == EMessageType.GoldPicked ||
+                msg.MessageType() == EMessageType.PickUp)
+            log(String.format("%s%s", Recipient == 0 ? "Receive: " : "Send to " + Recipient + ": ", msg.toString()));*/
     }
 
     public void SendMessage(int Recipient, CMessageBase msg) throws Exception
@@ -122,7 +123,6 @@ public class Agent extends AbstractAgent
 
     public void SendBroadcastMessage(CMessageBase msg) throws Exception
     {
-        LogMessage(100, msg);
         for(int i = 1; i <= Memory.AgentCount(); i++)
         {
             if(i != getAgentId())

@@ -5,6 +5,9 @@ import student.*;
 import student.Messages.CMessageBase;
 import student.Messages.EMessageType;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public abstract class CFSMBaseState
 {
     public abstract EStateType GetStateType();
@@ -15,10 +18,35 @@ public abstract class CFSMBaseState
     CAgentMemory Memory() { return _owner.Memory; }
     CAgentMover Mover() { return _owner.Mover; }
 
+    int _let_pass_count = 0;
+
     public void OnMessage(CMessageBase inMessage) throws Exception
     {
         if(inMessage.MessageType() == EMessageType.LetPass)
-            Mover().LetPass();
+        {
+            if(_let_pass_count == 0)
+            {
+                ArrayList<Vector2D> poses = Memory().GetNeighbourhoodPoses(5, true);
+                if(poses.isEmpty())
+                    poses = Memory().GetNeighbourhoodPoses(5, false);
+
+                if(poses.isEmpty())
+                    Mover().LetPass();
+                else
+                {
+                    Collections.shuffle(poses);
+                    Mover().SetTarget(poses.get(0));
+                }
+
+
+            }
+            else if(_let_pass_count > 5)
+            {
+                _let_pass_count = 0;
+            }
+            else
+                _let_pass_count++;
+        }
     }
 
     public StatusMessage Pick() throws Exception
