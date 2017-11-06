@@ -59,9 +59,13 @@ public class CFSMStatePatrol extends CFSMBaseState
         if(inPos.x > inZone.Right)
             return new Vector2D(inZone.Right, inPos.y);
 
+
         Vector2D pos = Memory().GetFirstDarkPoint();
         if(pos != null)
+        {
+            Memory().CheckCoord(pos);
             return pos;
+        }
 
         int x = inPos.x;
         int y = inPos.y;
@@ -74,9 +78,15 @@ public class CFSMStatePatrol extends CFSMBaseState
 
             x += _dir.x;
             if(x > inZone.Right)
-                return new Vector2D(inZone.Left, inZone.Top);
+            {
+                Vector2D p = new Vector2D(inZone.Left, inZone.Top);
+                Memory().CheckCoord(p);
+                return p;
+            }
         }
-        return new Vector2D(x, y);
+        Vector2D p = new Vector2D(x, y);
+        Memory().CheckCoord(p);
+        return p;
     }
 
     private void ChangeTarget() throws Exception
@@ -86,16 +96,21 @@ public class CFSMStatePatrol extends CFSMBaseState
 
         Vector2D target = Mover().GetTarget();
         if(target == null)
+        {
             if(z.InsideSoft(our_pos))
                 target = our_pos;
             else
                 target = new Vector2D(z.Left, our_pos.y);
+        }
+
+        Memory().CheckCoord(target);
 
         int circle_count = (z.Width() + 1) * (z.Height() + 1);
 
         while((!Memory().IsPassableCell(target, false) || our_pos.equals(target) || !Mover().SetTarget(target)) && circle_count > 0)
         {
             target = GetNexTarget(z, target);
+            Memory().CheckCoord(target);
             circle_count--;
         }
 

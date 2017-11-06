@@ -21,7 +21,14 @@ public class CAgentMemory
 
     ArrayList<Vector2D> _agents_around_me = new ArrayList<>();
 
-    HashSet<Vector2D> _dark_poses = new HashSet<>();
+    HashSet<Vector2D> _dark_poses_small = new HashSet<>();
+    HashSet<Vector2D> _dark_poses_full = new HashSet<>();
+
+    public void CheckCoord(Vector2D pos)
+    {
+        if(pos.x < 0 || pos.x>= _map.MapWidth() || pos.y < 0 || pos.y >= _map.MapHeight())
+            throw new RuntimeException( String.format("Incorrect coord %s!", pos));
+    }
 
     class CAgentInfo
     {
@@ -47,7 +54,7 @@ public class CAgentMemory
 
         for(int x = pz.Left; x <= pz.Right; ++x)
             for(int y = pz.Top; y <= pz.Bottom; ++y)
-                _dark_poses.add(new Vector2D(x, y));
+                _dark_poses_small.add(new Vector2D(x, y));
     }
 
     public int AgentCount() {return _agent_count;}
@@ -59,13 +66,20 @@ public class CAgentMemory
         _pos = new Vector2D(sm.agentX, sm.agentY);
 
         _map.InitCoord(sm.width, sm.height);
+
+        for(int x = 0; x < _map.MapWidth(); ++x)
+            for(int y = 0; y < _map.MapHeight(); ++y)
+                _dark_poses_full.add(new Vector2D(x, y));
     }
 
     void DeleteDarkPos(Vector2D pos)
     {
         ArrayList<Vector2D> poses = pos.GetNeighbourhoodPoses(_map.GetMapRect(), 1);
         for(Vector2D p : poses)
-            _dark_poses.remove(p);
+        {
+            _dark_poses_small.remove(p);
+            _dark_poses_full.remove(p);
+        }
     }
 
     private void RefreshEnvironment(StatusMessage sm, ArrayList<Vector2D> outNewObstacles, ArrayList<Vector2D> outNewGold, ArrayList<Vector2D> outNewDepots) throws Exception
@@ -175,7 +189,8 @@ public class CAgentMemory
 
     public void SetAgentState(int inAgentId, EStateType inStateType)
     {
-        _agents_info[inAgentId - 1].StateType = inStateType;
+        if(_agents_info != null)
+            _agents_info[inAgentId - 1].StateType = inStateType;
     }
 
     public EStateType GetAgentState(int inAgentId)
@@ -227,11 +242,18 @@ public class CAgentMemory
 
     public Vector2D GetFirstDarkPoint()
     {
-        if(_dark_poses.isEmpty())
-            return null;
+        if(!_dark_poses_small.isEmpty())
+        {
+            Vector2D pos = _dark_poses_small.iterator().next();
+            return pos;
+        }
 
-        Vector2D pos = _dark_poses.iterator().next();
-        return pos;
+        if(!_dark_poses_full.isEmpty())
+        {
+            Vector2D pos = _dark_poses_full.iterator().next();
+            return pos;
+        }
+        return null;
     }
 
     public Vector2D GetAgentPos(int inAgentId)
