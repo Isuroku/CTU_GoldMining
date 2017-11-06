@@ -49,8 +49,8 @@ public class Agent extends AbstractAgent
     @Override
     public void act() throws Exception
     {
-       // while(true) {
-
+       while(true)
+       {
             if(_update_counter == 0)
                 _fsm.state().OnEnter(null);
 
@@ -78,7 +78,7 @@ public class Agent extends AbstractAgent
             /*try {
                 Thread.sleep(200);
             } catch(InterruptedException ie) {}*/
-        //}
+        }
     }
 
     public CFSMBaseState SwitchState(EStateType inStateType) throws Exception
