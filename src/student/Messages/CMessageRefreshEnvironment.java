@@ -40,7 +40,7 @@ public class CMessageRefreshEnvironment extends CMessageBase
         return true;
     }
 
-    void LoadData(String inData)
+    private void LoadData(String inData)
     {
         for(EDataType dt : EDataType.values())
         {
