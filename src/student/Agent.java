@@ -101,18 +101,20 @@ public class Agent extends AbstractAgent
         throw new RuntimeException(String.format("Can't find state %s", inStateType));
     }
 
-    public void log(Object obj, boolean print)
+    public void log(Object obj, boolean print) throws Exception
     {
         //if(print)
           //  log(obj);
     }
 
-    private void LogMessage(int Recipient, CMessageBase msg)
+    private void LogMessage(int Recipient, CMessageBase msg) throws Exception
     {
         /*if(msg.MessageType() == EMessageType.TakeGold ||
                 msg.MessageType() == EMessageType.GoldPicked ||
-                msg.MessageType() == EMessageType.PickUp)
-            log(String.format("%s%s", Recipient == 0 ? "Receive: " : "Send to " + Recipient + ": ", msg.toString()));*/
+                msg.MessageType() == EMessageType.PickUp)*/
+
+        //if(msg.MessageType() == EMessageType.AgentCount)
+          //  log(String.format("%s%s", Recipient == 0 ? "Receive: " : "Send to " + Recipient + ": ", msg.toString()));
     }
 
     public void SendMessage(int Recipient, CMessageBase msg) throws Exception

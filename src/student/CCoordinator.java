@@ -32,9 +32,9 @@ public class CCoordinator
 
     public void Update(long inUpdateNumber) throws Exception
     {
-        if(inUpdateNumber < 2)
+        if(inUpdateNumber < 5)
             return;
-        if(inUpdateNumber == 2)
+        if(inUpdateNumber == 5)
         {
             _owner.SendBroadcastMessage(new CMessageAgentCount(_owner.getAgentId(), Memory().AgentCount()));
             _owner.SwitchState(EStateType.Patrol);

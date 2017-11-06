@@ -365,12 +365,12 @@ public class CMap
         s_cell.WaveLength = 0;
         s_cell.WaveNumber = _wave_number;
 
-        CBinaryHeap set = new CBinaryHeap();
-        set.Insert(s_cell);
+        _set.MakeEmpty();
+        _set.Insert(s_cell);
 
-        while(!set.IsEmpty())
+        while(!_set.IsEmpty())
         {
-            CMapCell cell = (CMapCell)set.DeleteMin();
+            CMapCell cell = (CMapCell)_set.DeleteMin();
 
             if(cell.Depot)
                 return cell.Pos;
@@ -379,7 +379,7 @@ public class CMap
             for(Vector2D p : neighbours)
             {
                 CMapCell n = GetCell(p);
-                SetInWave(cell, n, set);
+                SetInWave(cell, n, _set);
             }
         }
 
