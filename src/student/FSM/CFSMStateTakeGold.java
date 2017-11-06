@@ -53,7 +53,7 @@ public class CFSMStateTakeGold extends CFSMBaseState
 
     }
 
-    int _around_me_counter = 0;
+    private int _around_me_counter = 0;
 
     @Override
     public void Update(long inUpdateNumber) throws Exception
@@ -97,9 +97,9 @@ public class CFSMStateTakeGold extends CFSMBaseState
         }
     }
 
-    Vector2D _gold_pos;
-    Vector2D _target_pos;
-    int _friend_id;
+    private Vector2D _gold_pos;
+    private Vector2D _target_pos;
+    private int _friend_id;
 
     public void SetGold(Vector2D gold_pos, int inAgent1, int inAgent2) throws Exception
     {

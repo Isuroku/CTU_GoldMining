@@ -9,7 +9,7 @@ import student.Vector2D;
 
 public class CFSMStateGoldToDepot extends CFSMBaseState
 {
-    Vector2D _depot_pos;
+    private Vector2D _depot_pos;
 
     public CFSMStateGoldToDepot(Agent owner)
     {

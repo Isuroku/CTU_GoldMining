@@ -13,7 +13,7 @@ import java.util.Collections;
 
 public class CMap
 {
-    private CAgentMemory _owner;
+    private final CAgentMemory _owner;
 
     private Rect2D _map_rect;
 
@@ -21,8 +21,8 @@ public class CMap
 
     private CMapCell[] _agent_pos;
 
-    private ArrayList<CMapCell> _golds = new ArrayList<>();
-    private ArrayList<CMapCell> _depots = new ArrayList<>();
+    private final ArrayList<CMapCell> _golds = new ArrayList<>();
+    private final ArrayList<CMapCell> _depots = new ArrayList<>();
 
     public CMap(CAgentMemory owner)
     {
@@ -43,7 +43,7 @@ public class CMap
         return new Vector2D(x, y);
     }
 
-    public void InitCoord(int width, int height) throws Exception
+    public void InitCoord(int width, int height)
     {
         _map_rect = new Rect2D(0, width - 1, 0, height - 1);
 
@@ -53,11 +53,6 @@ public class CMap
             Vector2D p = IndexToCoord(i);
             _cells[i] = new CMapCell(p);
         }
-
-        /*if(_pos.x == 0 && _pos.y == 0)
-        {
-            Vector2D[] path = GetPath(new Vector2D(3, 3));
-        }*/
     }
 
     public void SetAgentCount(int count)
@@ -67,27 +62,13 @@ public class CMap
 
     public void SetNewObstacles(Iterable<Vector2D> coord_list)
     {
-        //coord_list.forEach(v -> GetCell(v).SetObstacle());
-
         for (Vector2D v : coord_list)
-        {
             GetCell(v).SetObstacle();
-        }
     }
 
 
     public void SetNewGold(Iterable<Vector2D> coord_list)
     {
-        /*coord_list.forEach(v ->
-        {
-            CMapCell c = GetCell(v);
-            if(!c.Gold)
-            {
-                c.Gold = true;
-                _golds.add(c);
-            }
-        });*/
-
         for (Vector2D v : coord_list)
         {
             CMapCell c = GetCell(v);
@@ -101,16 +82,6 @@ public class CMap
 
     public void SetNewDepot(Iterable<Vector2D> coord_list)
     {
-        /*coord_list.forEach(v ->
-        {
-            CMapCell c = GetCell(v);
-            if(!c.Depot)
-            {
-                c.Depot = true;
-                _depots.add(c);
-            }
-        });*/
-
         for (Vector2D v : coord_list)
         {
             CMapCell c = GetCell(v);
@@ -162,7 +133,7 @@ public class CMap
                                    ArrayList<Vector2D> outNewObstacles,
                                    ArrayList<Vector2D> outNewGold,
                                    ArrayList<Vector2D> outNewDepots,
-                                   ArrayList<Vector2D> outAgents) throws Exception
+                                   ArrayList<Vector2D> outAgents)
     {
 
         for (StatusMessage.SensorData data : sm.sensorInput)
@@ -201,6 +172,8 @@ public class CMap
         return _cells[index];
     }
 
+    private CBinaryHeap _set = new CBinaryHeap();
+
     public Integer[] ClosestFreeAgent(Vector2D target)
     {
         CMapCell s_cell = GetCell(target);
@@ -211,15 +184,15 @@ public class CMap
         s_cell.WaveLength = 0;
         s_cell.WaveNumber = _wave_number;
 
-        CBinaryHeap set = new CBinaryHeap();
-        set.Insert(s_cell);
+        _set.MakeEmpty();
+        _set.Insert(s_cell);
 
         int need_count = 2;
         ArrayList<Integer> agents = new ArrayList<>();
 
-        while(!set.IsEmpty() && agents.size() < need_count)
+        while(!_set.IsEmpty() && agents.size() < need_count)
         {
-            CMapCell cell = (CMapCell)set.DeleteMin();
+            CMapCell cell = (CMapCell)_set.DeleteMin();
 
             if(cell.AgentId > 0 && _owner.GetAgentState(cell.AgentId) == EStateType.Patrol)
                 agents.add(cell.AgentId);
@@ -230,7 +203,7 @@ public class CMap
                 for(Vector2D p : neighbours)
                 {
                     CMapCell n = GetCell(p);
-                    SetInWave(cell, n, set);
+                    SetInWave(cell, n, _set);
                 }
             }
         }
@@ -253,13 +226,13 @@ public class CMap
         s_cell.WaveLength = 0;
         s_cell.WaveNumber = _wave_number;
 
-        CBinaryHeap set = new CBinaryHeap();
-        set.Insert(s_cell);
+        _set.MakeEmpty();
+        _set.Insert(s_cell);
 
         boolean found = false;
-        while(!set.IsEmpty() && !found)
+        while(!_set.IsEmpty() && !found)
         {
-            CMapCell cell = (CMapCell)set.DeleteMin();
+            CMapCell cell = (CMapCell)_set.DeleteMin();
 
             found = cell == f_cell;
 
@@ -269,7 +242,7 @@ public class CMap
                 for(Vector2D p : neighbours)
                 {
                     CMapCell n = GetCell(p);
-                    SetInWave(cell, n, set);
+                    SetInWave(cell, n, _set);
                 }
             }
         }

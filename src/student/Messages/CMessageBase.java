@@ -5,9 +5,9 @@ import mas.agents.StringMessage;
 
 public abstract class CMessageBase
 {
-    protected int _sender_id;
+    private final int _sender_id;
 
-    public CMessageBase(int sender_id)
+    CMessageBase(int sender_id)
     {
         _sender_id = sender_id;
     }
@@ -18,7 +18,7 @@ public abstract class CMessageBase
     public String toString() { return String.format("Msg %s from Agent %d. ", MessageType(), _sender_id); }
 
     public abstract EMessageType MessageType();
-    public abstract boolean Init(String inMsgBody);
+    protected abstract boolean Init(String inMsgBody);
 
     public static CMessageBase CreateMessage(int SenderId, String inMsgStr)
     {
@@ -34,7 +34,7 @@ public abstract class CMessageBase
         throw new IllegalArgumentException(String.format("SenderId %d, inMsgStr %s", SenderId, inMsgStr));
     }
 
-    public static CMessageBase CreateMessage(int SenderId, EMessageType inMsgType, String inMsgBody)
+    private static CMessageBase CreateMessage(int SenderId, EMessageType inMsgType, String inMsgBody)
     {
         CMessageBase msg = null;
         switch(inMsgType)
@@ -61,5 +61,5 @@ public abstract class CMessageBase
         return new StringMessage(str);
     }
 
-    public abstract String GetBodyCoding();
+    protected abstract String GetBodyCoding();
 }

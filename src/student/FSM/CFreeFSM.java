@@ -2,11 +2,11 @@ package student.FSM;
 
 public class CFreeFSM
 {
-    CFSMBaseState _state; //current state
+    private CFSMBaseState _state; //current state
 
     public CFSMBaseState state() { return _state; }
 
-    public CFreeFSM(CFSMBaseState state) throws Exception
+    public CFreeFSM(CFSMBaseState state)
     {
         _state = state;
     }

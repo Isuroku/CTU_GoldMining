@@ -9,9 +9,9 @@ import java.util.*;
 
 public class CAgentMemory
 {
-    private Agent _owner;
+    private final Agent _owner;
 
-    private CMap _map;
+    private final CMap _map;
 
     private int _agent_count = 1;
 
@@ -19,10 +19,10 @@ public class CAgentMemory
 
     private CAgentInfo[] _agents_info;
 
-    ArrayList<Vector2D> _agents_around_me = new ArrayList<>();
+    private final ArrayList<Vector2D> _agents_around_me = new ArrayList<>();
 
-    HashSet<Vector2D> _dark_poses_small = new HashSet<>();
-    HashSet<Vector2D> _dark_poses_full = new HashSet<>();
+    private final HashSet<Vector2D> _dark_poses_small = new HashSet<>();
+    private final HashSet<Vector2D> _dark_poses_full = new HashSet<>();
 
     public void CheckCoord(Vector2D pos)
     {
@@ -32,7 +32,7 @@ public class CAgentMemory
 
     class CAgentInfo
     {
-        public EStateType StateType = EStateType.Idle;
+        EStateType StateType = EStateType.Idle;
     }
 
     CAgentMemory(Agent owner)
@@ -81,7 +81,7 @@ public class CAgentMemory
                 _dark_poses_full.add(new Vector2D(x, y));
     }
 
-    void DeleteDarkPos(Vector2D pos)
+    private void DeleteDarkPos(Vector2D pos)
     {
         ArrayList<Vector2D> poses = pos.GetNeighbourhoodPoses(_map.GetMapRect(), 1);
         for(Vector2D p : poses)
@@ -141,7 +141,7 @@ public class CAgentMemory
         RefreshEnvironment(sm, true);
     }
 
-    Vector2D _sent_pos = new Vector2D(-1, -1);
+    private Vector2D _sent_pos = new Vector2D(-1, -1);
 
     public void RefreshEnvironment(StatusMessage sm, boolean send) throws Exception
     {
@@ -252,16 +252,11 @@ public class CAgentMemory
     public Vector2D GetFirstDarkPoint()
     {
         if(!_dark_poses_small.isEmpty())
-        {
-            Vector2D pos = _dark_poses_small.iterator().next();
-            return pos;
-        }
+            return _dark_poses_small.iterator().next();
 
         if(!_dark_poses_full.isEmpty())
-        {
-            Vector2D pos = _dark_poses_full.iterator().next();
-            return pos;
-        }
+            return _dark_poses_full.iterator().next();
+
         return null;
     }
 

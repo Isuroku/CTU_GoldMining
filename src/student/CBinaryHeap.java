@@ -18,9 +18,7 @@ public class CBinaryHeap
         _current_size = items.length;
         _array = new Comparable[items.length+1];
 
-        for (int i = 0; i < items.length; i++) {
-            _array[ i + 1 ] = items[ i ];
-        }
+        System.arraycopy(items, 0, _array, 1, items.length);
         BuildHeap();
     }
 
@@ -40,7 +38,7 @@ public class CBinaryHeap
         _array[hole] = x;
     }
 
-    public Comparable FindMin()
+    private Comparable FindMin()
     {
         if (IsEmpty()) {
             throw new RuntimeException( "Empty binary heap" );
@@ -103,8 +101,7 @@ public class CBinaryHeap
         Comparable [ ] newArray;
 
         newArray = new Comparable[ _array.length * 2 ];
-        for( int i = 0; i < _array.length; i++ )
-            newArray[ i ] = _array[ i ];
+        System.arraycopy(_array, 0, newArray, 0, _array.length);
         _array = newArray;
     }
 }

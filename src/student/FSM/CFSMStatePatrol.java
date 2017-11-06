@@ -50,7 +50,7 @@ public class CFSMStatePatrol extends CFSMBaseState
 
 
 
-    private Vector2D _dir = new Vector2D(1, 1);
+    private final Vector2D _dir = new Vector2D(1, 1);
 
     private Vector2D GetNexTarget(Rect2D inZone, Vector2D inPos)
     {

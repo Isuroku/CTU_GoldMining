@@ -4,7 +4,7 @@ import student.Vector2D;
 
 class CMapCell implements Comparable<CMapCell>
 {
-    Vector2D Pos;
+    final Vector2D Pos;
 
     boolean IsPassable(boolean agent_obstacle)
     {

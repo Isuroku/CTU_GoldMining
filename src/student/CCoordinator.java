@@ -8,14 +8,14 @@ import java.util.HashSet;
 
 public class CCoordinator
 {
-    Agent _owner;
+    private final Agent _owner;
 
     CCoordinator(Agent owner)
     {
         _owner = owner;
     }
 
-    CAgentMemory Memory() { return _owner.Memory; }
+    private CAgentMemory Memory() { return _owner.Memory; }
     //CAgentMover Mover() { return _owner.Mover; }
 
     public void OnMessage(CMessageBase inMessage) throws Exception
@@ -32,9 +32,9 @@ public class CCoordinator
 
     public void Update(long inUpdateNumber) throws Exception
     {
-        if(inUpdateNumber < 3)
+        if(inUpdateNumber < 2)
             return;
-        if(inUpdateNumber == 3)
+        if(inUpdateNumber == 2)
         {
             _owner.SendBroadcastMessage(new CMessageAgentCount(_owner.getAgentId(), Memory().AgentCount()));
             _owner.SwitchState(EStateType.Patrol);
@@ -87,5 +87,5 @@ public class CCoordinator
 
     }
 
-    HashSet<Vector2D> _processed_golds = new HashSet<>();
+    private final HashSet<Vector2D> _processed_golds = new HashSet<>();
 }

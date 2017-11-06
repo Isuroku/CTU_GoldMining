@@ -11,13 +11,13 @@ public class CAgentMover
         _owner = owner;
     }
 
-    Agent _owner;
+    private final Agent _owner;
 
-    Vector2D[] _path;
-    int _index;
-    int _agent_lower = 0;
+    private Vector2D[] _path;
+    private int _index;
+    private int _agent_lower = 0;
 
-    CAgentMemory Memory() { return _owner.Memory; }
+    private CAgentMemory Memory() { return _owner.Memory; }
 
     public Vector2D GetTarget()
     {
@@ -37,7 +37,7 @@ public class CAgentMover
         return _path != null;
     }
 
-    void ResetPath()
+    private void ResetPath()
     {
         _path = null;
         _index = 0;
@@ -100,7 +100,7 @@ public class CAgentMover
          return MakeStep(step_pos);
     }
 
-    int GetPrioritize(int inAgentId)
+    private int GetPrioritize(int inAgentId)
     {
         EStateType state = Memory().GetAgentState(inAgentId);
         int p = inAgentId;
@@ -112,7 +112,7 @@ public class CAgentMover
         return p;
     }
 
-    Tuple<EStepResult, Integer> MakeStep(Vector2D pos) throws Exception
+    private Tuple<EStepResult, Integer> MakeStep(Vector2D pos) throws Exception
     {
         Vector2D our_pos = _owner.Memory.Position();
         int dx = pos.x - our_pos.x;
@@ -147,35 +147,35 @@ public class CAgentMover
         return new Tuple<>(res, 0);
     }
 
-    public StatusMessage Left() throws Exception
+    private StatusMessage Left() throws Exception
     {
         StatusMessage sm = _owner.left();
         Memory().RefreshEnvironment(sm);
         return sm;
     }
 
-    public StatusMessage Right() throws Exception
+    private StatusMessage Right() throws Exception
     {
         StatusMessage sm = _owner.right();
         Memory().RefreshEnvironment(sm);
         return sm;
     }
 
-    public StatusMessage Up() throws Exception
+    private StatusMessage Up() throws Exception
     {
         StatusMessage sm = _owner.up();
         Memory().RefreshEnvironment(sm);
         return sm;
     }
 
-    public StatusMessage Down() throws Exception
+    private StatusMessage Down() throws Exception
     {
         StatusMessage sm = _owner.down();
         Memory().RefreshEnvironment(sm);
         return sm;
     }
 
-    Vector2D GetFreePosition()
+    private Vector2D GetFreePosition()
     {
         Vector2D[] neighbours = Memory().Position().GetNeighbours(Memory().GetMapRect());
 

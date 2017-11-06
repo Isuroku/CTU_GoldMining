@@ -17,14 +17,14 @@ import java.util.ArrayList;
 
 public class Agent extends AbstractAgent
 {
-    CFreeFSM _fsm;
+    private CFreeFSM _fsm;
 
-    ArrayList<CFSMBaseState> _states = new ArrayList<CFSMBaseState>();
+    private final ArrayList<CFSMBaseState> _states = new ArrayList<CFSMBaseState>();
 
-    long _update_counter = 0;
+    private long _update_counter = 0;
 
     public CAgentMemory Memory;
-    public CCoordinator Coordinator;
+    private CCoordinator Coordinator;
     public CAgentMover Mover;
 
     public Agent(int id, InputStream is, OutputStream os, SimulationApi api) throws Exception
@@ -101,13 +101,13 @@ public class Agent extends AbstractAgent
         throw new RuntimeException(String.format("Can't find state %s", inStateType));
     }
 
-    public void log(Object obj, boolean print) throws Exception
+    public void log(Object obj, boolean print)
     {
         //if(print)
           //  log(obj);
     }
 
-    void LogMessage(int Recipient, CMessageBase msg) throws Exception
+    private void LogMessage(int Recipient, CMessageBase msg)
     {
         /*if(msg.MessageType() == EMessageType.TakeGold ||
                 msg.MessageType() == EMessageType.GoldPicked ||

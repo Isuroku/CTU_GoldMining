@@ -18,7 +18,7 @@ public abstract class CFSMBaseState
     CAgentMemory Memory() { return _owner.Memory; }
     CAgentMover Mover() { return _owner.Mover; }
 
-    int _let_pass_count = 0;
+    private int _let_pass_count = 0;
 
     public void OnMessage(CMessageBase inMessage) throws Exception
     {
@@ -49,26 +49,26 @@ public abstract class CFSMBaseState
         }
     }
 
-    public StatusMessage Pick() throws Exception
+    StatusMessage Pick() throws Exception
     {
         StatusMessage sm = _owner.pick();
         Memory().RefreshEnvironment(sm);
         return sm;
     }
 
-    public StatusMessage Drop() throws Exception
+    StatusMessage Drop() throws Exception
     {
         StatusMessage sm = _owner.drop();
         Memory().RefreshEnvironment(sm);
         return sm;
     }
 
-    public StatusMessage Sense() throws Exception
+    StatusMessage Sense() throws Exception
     {
         return Sense(true);
     }
 
-    public StatusMessage Sense(boolean send) throws Exception
+    StatusMessage Sense(boolean send) throws Exception
     {
         StatusMessage sm = _owner.sense();
         Memory().RefreshEnvironment(sm, send);
@@ -80,5 +80,5 @@ public abstract class CFSMBaseState
         _owner = owner;
     }
 
-    protected Agent _owner;
+    final Agent _owner;
 }
